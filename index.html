@@ -326,8 +326,7 @@
 <li>能够free一个smallchunk或largechunk</li>
 <li>能够控制到下一chunk的prevsize和size</li>
 </ol>
-<p>###利用过程（64位为例）</p>
-<ol>
+<h3 id="利用过程（64位为例）"><a href="#利用过程（64位为例）" class="headerlink" title="利用过程（64位为例）"></a>利用过程（64位为例）</h3><ol>
 <li>分配连续3个chunk a, b(非fastchunk), c</li>
 <li><p>在a中伪造chunk<figure class="highlight plain"><figcaption><span>+ p64(0x80) + p64(head_ptr-0x18) + p64(head_ptr-0x10) + padding```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3. 覆盖b的prevsize和size，修改inuse位，使之可以与a合并``` p64(0x80) + p64(0x90)</span><br></pre></td></tr></table></figure></p>
 </li>
