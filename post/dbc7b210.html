@@ -70,7 +70,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="pwn,堆利用," />
 
 
 
@@ -81,14 +81,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="https://hpasserby.github.io/categories/index.html">
+<meta name="description" content="unlink原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV">
+<meta name="keywords" content="pwn,堆利用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="unlink">
+<meta property="og:url" content="https://hpasserby.github.io/post/dbc7b210.html">
 <meta property="og:site_name" content="Hpasserby">
+<meta property="og:description" content="unlink原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-29T15:45:59.703Z">
+<meta property="og:updated_time" content="2018-09-29T15:20:31.078Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
+<meta name="twitter:title" content="unlink">
+<meta name="twitter:description" content="unlink原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV">
 
 
 
@@ -118,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="https://hpasserby.github.io/categories/"/>
+  <link rel="canonical" href="https://hpasserby.github.io/post/dbc7b210.html"/>
 
 
 
 
 
-  <title>categories | Hpasserby</title>
+  <title>unlink | Hpasserby</title>
   
 
 
@@ -276,40 +280,186 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://hpasserby.github.io/post/dbc7b210.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hpasserby">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hpasserby">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h1 class="post-title" itemprop="name headline">categories</h1>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <div class="category-all-page">
-            <div class="category-all-title">
-                目前共计 1 个分类
-            </div>
-            <div class="category-all">
-              <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/堆利用/">堆利用</a><span class="category-list-count">1</span></li></ul>
-            </div>
-          </div>
+          <h1 class="post-title" itemprop="name headline">unlink</h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-29T21:10:54+08:00">
+                2018-09-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/堆利用/" itemprop="url" rel="index">
+                    <span itemprop="name">堆利用</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <h1 id="unlink"><a href="#unlink" class="headerlink" title="unlink"></a>unlink</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。<br><strong>源码：</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Take a chunk off a bin list */</span></span><br><span class="line"><span class="comment">// unlink p</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlink(AV, P, BK, FD) &#123;                                            </span></span><br><span class="line">    <span class="comment">// 由于 P 已经在双向链表中，所以有两个地方记录其大小，所以检查一下其大小是否一致。</span></span><br><span class="line">    <span class="keyword">if</span> (__builtin_expect (chunksize(P) != prev_size (next_chunk(P)), <span class="number">0</span>))</span><br><span class="line">      malloc_printerr (<span class="string">"corrupted size vs. prev_size"</span>);               </span><br><span class="line">    FD = P-&gt;fd;                                                                    </span><br><span class="line">    BK = P-&gt;bk;                                                                      </span><br><span class="line">    <span class="comment">// 防止攻击者简单篡改空闲的 chunk 的 fd 与 bk 来实现任意写的效果。</span></span><br><span class="line">    <span class="keyword">if</span> (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, <span class="number">0</span>))                      </span><br><span class="line">      malloc_printerr (check_action, <span class="string">"corrupted double-linked list"</span>, P, AV);  </span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        FD-&gt;bk = BK;</span><br><span class="line">        BK-&gt;fd = FD;</span><br><span class="line">        <span class="comment">// 下面主要考虑 P 对应的 nextsize 双向链表的修改</span></span><br><span class="line">        <span class="keyword">if</span> (!in_smallbin_range (chunksize_nomask (P))</span><br><span class="line">            <span class="comment">// 如果P-&gt;fd_nextsize为 NULL，表明 P 未插入到 nextsize 链表中。</span></span><br><span class="line">            <span class="comment">// 那么其实也就没有必要对 nextsize 字段进行修改了。</span></span><br><span class="line">            <span class="comment">// 这里没有去判断 bk_nextsize 字段，可能会出问题。</span></span><br><span class="line">            &amp;&amp; __builtin_expect (P-&gt;fd_nextsize != <span class="literal">NULL</span>, <span class="number">0</span>)) &#123;</span><br><span class="line">            <span class="comment">// 类似于小的 chunk 的检查思路</span></span><br><span class="line">            <span class="keyword">if</span> (__builtin_expect (P-&gt;fd_nextsize-&gt;bk_nextsize != P, <span class="number">0</span>)</span><br><span class="line">                || __builtin_expect (P-&gt;bk_nextsize-&gt;fd_nextsize != P, <span class="number">0</span>))</span><br><span class="line">              malloc_printerr (check_action,</span><br><span class="line">                               <span class="string">"corrupted double-linked list (not small)"</span>, </span><br><span class="line">                               P, AV);   </span><br><span class="line">            <span class="comment">// 这里说明 P 已经在 nextsize 链表中了。</span></span><br><span class="line">            <span class="comment">// 如果 FD 没有在 nextsize 链表中</span></span><br><span class="line">            <span class="keyword">if</span> (FD-&gt;fd_nextsize == <span class="literal">NULL</span>) &#123; </span><br><span class="line">                <span class="comment">// 如果 nextsize 串起来的双链表只有 P 本身，那就直接拿走 P</span></span><br><span class="line">                <span class="comment">// 令 FD 为 nextsize 串起来的</span></span><br><span class="line">                <span class="keyword">if</span> (P-&gt;fd_nextsize == P)  </span><br><span class="line">                  FD-&gt;fd_nextsize = FD-&gt;bk_nextsize = FD; </span><br><span class="line">                <span class="keyword">else</span> &#123;                                                </span><br><span class="line">                <span class="comment">// 否则我们需要将 FD 插入到 nextsize 形成的双链表中</span></span><br><span class="line">                    FD-&gt;fd_nextsize = P-&gt;fd_nextsize;                          </span><br><span class="line">                    FD-&gt;bk_nextsize = P-&gt;bk_nextsize;                             </span><br><span class="line">                    P-&gt;fd_nextsize-&gt;bk_nextsize = FD;                              </span><br><span class="line">                    P-&gt;bk_nextsize-&gt;fd_nextsize = FD;                              </span><br><span class="line">                  &#125;                                                              </span><br><span class="line">              &#125; <span class="keyword">else</span> &#123;                                                              </span><br><span class="line">                <span class="comment">// 如果在的话，直接拿走即可</span></span><br><span class="line">                P-&gt;fd_nextsize-&gt;bk_nextsize = P-&gt;bk_nextsize;                      </span><br><span class="line">                P-&gt;bk_nextsize-&gt;fd_nextsize = P-&gt;fd_nextsize;                      </span><br><span class="line">              &#125;                                                                      </span><br><span class="line">          &#125;                                                                      </span><br><span class="line">      &#125;                                                                              </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中主要关注这部分：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (__builtin_expect (chunksize(P) != prev_size (next_chunk(P)), <span class="number">0</span>))</span><br><span class="line">    malloc_printerr (<span class="string">"corrupted size vs. prev_size"</span>); </span><br><span class="line">FD = P-&gt;fd;</span><br><span class="line">BK = P-&gt;bk;</span><br><span class="line"><span class="keyword">if</span> (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, <span class="number">0</span>))</span><br><span class="line">    malloc_printerr (check_action, <span class="string">"corrupted double-linked list"</span>, P);</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">FD-&gt;bk = BK;</span><br><span class="line">BK-&gt;fd = FD;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>要利用该漏洞，先要绕过其中的if检查（64位为例）<br>第一处检查<code>chunksize(P) != prev_size (next_chunk(P))</code>需要构造好下一相邻chunk的presize</p>
+<p>第二处检查：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">P-&gt;bk-&gt;fd == P <span class="comment">// *(P+0x18)+0x10 == P</span></span><br><span class="line"><span class="comment">//               =&gt; *(P+0x18) = P-0x10 </span></span><br><span class="line"><span class="comment">//               =&gt; P-&gt;bk == P-0x10</span></span><br><span class="line"><span class="comment">//               =&gt; BK == P-0x10</span></span><br><span class="line">P-&gt;fd-&gt;bk == P <span class="comment">// *(P+0x10)+0x18 == P</span></span><br><span class="line"><span class="comment">//               =&gt; *(P+0x10) = P-0x18</span></span><br><span class="line"><span class="comment">//               =&gt; P-&gt;fd == P-0x18</span></span><br><span class="line"><span class="comment">//               =&gt; FD == p-0x18</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看出，只要在fd处放入P-0x18，在bk处放入P-0x10即可绕过检查。<br>绕过检查后：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FD-&gt;bk = BK; <span class="comment">// *(FD+0x18) = P-0x10</span></span><br><span class="line">BK-&gt;fd = FD; <span class="comment">// *(BK+0x10) = P-0x18 =&gt; *P = P-0x18</span></span><br></pre></td></tr></table></figure></p>
+<p>在此之后，P就指向了比自己低0x18个字节的地址，可以通过再次向P写入从而覆盖掉P本身，将其修改为任意地址，第三次向P写入则实现了任意地址写。</p>
+<h2 id="触发前提"><a href="#触发前提" class="headerlink" title="触发前提"></a>触发前提</h2><ol>
+<li>堆地址是可以泄露的</li>
+<li>能够free一个smallchunk或largechunk</li>
+<li>能够控制到下一chunk的prevsize和size</li>
+</ol>
+<h2 id="利用过程（64位为例）"><a href="#利用过程（64位为例）" class="headerlink" title="利用过程（64位为例）"></a>利用过程（64位为例）</h2><ol>
+<li>分配连续3个chunk a, b(非fastchunk), c</li>
+<li>在a中伪造chunk<code>p64(0) + p64(0x80) + p64(head_ptr-0x18) + p64(head_ptr-0x10) + padding</code></li>
+<li>覆盖b的prevsize和size，修改inuse位，使之可以与a合并<code>p64(0x80) + p64(0x90)</code></li>
+<li>free掉b，触发unlink</li>
+<li>写入a，覆盖指针为任意地址，<code>p64(0)*3 + p64(addr)</code></li>
+<li>再次写入a，任意地址写入</li>
+</ol>
+
       
     </div>
     
     
     
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pwn/" rel="tag"># pwn</a>
+          
+            <a href="/tags/堆利用/" rel="tag"># 堆利用</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/post/d87f7e0c.html" rel="next" title="test">
+                <i class="fa fa-chevron-left"></i> test
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -342,8 +492,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -403,6 +562,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#unlink"><span class="nav-number">1.</span> <span class="nav-text">unlink</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#触发前提"><span class="nav-number">1.2.</span> <span class="nav-text">触发前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用过程（64位为例）"><span class="nav-number">1.3.</span> <span class="nav-text">利用过程（64位为例）</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
