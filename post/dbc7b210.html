@@ -84,14 +84,14 @@
 <meta name="description" content="原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV, P, B">
 <meta name="keywords" content="pwn,堆利用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="unlink">
+<meta property="og:title" content="堆利用学习之unlink">
 <meta property="og:url" content="https://hpasserby.github.io/post/dbc7b210.html">
 <meta property="og:site_name" content="Hpasserby">
 <meta property="og:description" content="原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV, P, B">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-30T16:59:21.922Z">
+<meta property="og:updated_time" content="2018-09-30T17:44:04.492Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="unlink">
+<meta name="twitter:title" content="堆利用学习之unlink">
 <meta name="twitter:description" content="原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV, P, B">
 
 
@@ -128,7 +128,7 @@
 
 
 
-  <title>unlink | Hpasserby</title>
+  <title>堆利用学习之unlink | Hpasserby</title>
   
 
 
@@ -309,7 +309,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">unlink</h1>
+          <h1 class="post-title" itemprop="name headline">堆利用学习之unlink</h1>
         
 
         <div class="post-meta">
@@ -337,7 +337,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-10-01T00:59:21+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2018-10-01T01:44:04+08:00">
                 2018-10-01
               </time>
             
@@ -373,7 +373,7 @@
 
           
           
-             <span id="/post/dbc7b210.html" class="leancloud_visitors" data-flag-title="unlink">
+             <span id="/post/dbc7b210.html" class="leancloud_visitors" data-flag-title="堆利用学习之unlink">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -411,7 +411,7 @@
 <p>可以看出，只要在fd处放入P-0x18，在bk处放入P-0x10即可绕过检查。<br>绕过检查后：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FD-&gt;bk = BK; <span class="comment">// *(FD+0x18) = P-0x10</span></span><br><span class="line">BK-&gt;fd = FD; <span class="comment">// *(BK+0x10) = P-0x18 =&gt; *P = P-0x18</span></span><br></pre></td></tr></table></figure></p>
 <p>在此之后，P就指向了比自己低0x18个字节的地址，可以通过再次向P写入从而覆盖掉P本身，将其修改为任意地址，第三次向P写入则实现了任意地址写。</p>
 <h2 id="触发前提"><a href="#触发前提" class="headerlink" title="触发前提"></a>触发前提</h2><ol>
-<li>堆地址是可以泄露的</li>
+<li>堆指针是全局变量，或其地址是可泄露的</li>
 <li>能够free一个smallchunk(可以是伪造的)(largebin增加对fd_nextsize和bk_nextsize检查，unsortedbin没有检查)</li>
 <li>能够控制下一chunk的prevsize和size</li>
 </ol>
