@@ -89,7 +89,7 @@
 <meta property="og:site_name" content="Hpasserby">
 <meta property="og:description" content="原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV, P, B">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-30T16:58:01.356Z">
+<meta property="og:updated_time" content="2018-09-30T16:59:21.922Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="unlink">
 <meta name="twitter:description" content="原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV, P, B">
@@ -337,7 +337,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-10-01T00:58:01+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2018-10-01T00:59:21+08:00">
                 2018-10-01
               </time>
             
@@ -422,7 +422,10 @@
 <li>覆盖b的prevsize和size，修改inuse位，使之可以与a合并<code>p64(0x80) + p64(0x90)</code></li>
 <li>free掉b，触发unlink</li>
 <li>写入a，覆盖指针为任意地址，<code>p64(0)*3 + p64(addr)</code></li>
-<li>再次写入a，任意地址写入<h3 id="法二"><a href="#法二" class="headerlink" title="法二"></a>法二</h3>不能溢出，但有double free</li>
+<li>再次写入a，任意地址写入</li>
+</ol>
+<h3 id="法二"><a href="#法二" class="headerlink" title="法二"></a>法二</h3><p>不能溢出，但有double free</p>
+<ol>
 <li>分配连续3个fastchunk a, b, c</li>
 <li>释放a，此时并不会修改后面的inuse位和prevsize</li>
 <li>申请一个大内存，触发fastbin合并，这时会将fastbin中的a取出放入unsortedbin，可以实现对b的inuse位进行修改</li>
