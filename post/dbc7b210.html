@@ -89,7 +89,7 @@
 <meta property="og:site_name" content="Hpasserby">
 <meta property="og:description" content="原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV, P, B">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-29T16:38:52.937Z">
+<meta property="og:updated_time" content="2018-09-30T16:58:01.356Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="unlink">
 <meta name="twitter:description" content="原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk。源码：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/* Take a chunk off a bin list */// unlink p#define unlink(AV, P, B">
@@ -327,7 +327,19 @@
             
 
             
+              <span class="post-meta-divider">|</span>
+            
 
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-10-01T00:58:01+08:00">
+                2018-10-01
+              </time>
             
           </span>
 
@@ -400,19 +412,26 @@
 <p>在此之后，P就指向了比自己低0x18个字节的地址，可以通过再次向P写入从而覆盖掉P本身，将其修改为任意地址，第三次向P写入则实现了任意地址写。</p>
 <h2 id="触发前提"><a href="#触发前提" class="headerlink" title="触发前提"></a>触发前提</h2><ol>
 <li>堆地址是可以泄露的</li>
-<li>能够free一个smallchunk或largechunk</li>
-<li>能够控制到下一chunk的prevsize和size</li>
+<li>能够free一个smallchunk(可以是伪造的)(largebin增加对fd_nextsize和bk_nextsize检查，unsortedbin没有检查)</li>
+<li>能够控制下一chunk的prevsize和size</li>
 </ol>
-<h2 id="利用过程（64位为例）"><a href="#利用过程（64位为例）" class="headerlink" title="利用过程（64位为例）"></a>利用过程（64位为例）</h2><ol>
-<li>分配连续3个chunk a, b(非fastchunk), c</li>
+<h2 id="利用过程（64位为例）"><a href="#利用过程（64位为例）" class="headerlink" title="利用过程（64位为例）"></a>利用过程（64位为例）</h2><h3 id="法一"><a href="#法一" class="headerlink" title="法一"></a>法一</h3><p>存在堆溢出时：</p>
+<ol>
+<li>分配连续3个chunk a, b, c</li>
 <li>在a中伪造chunk<code>p64(0) + p64(0x80) + p64(head_ptr-0x18) + p64(head_ptr-0x10) + padding</code></li>
 <li>覆盖b的prevsize和size，修改inuse位，使之可以与a合并<code>p64(0x80) + p64(0x90)</code></li>
 <li>free掉b，触发unlink</li>
 <li>写入a，覆盖指针为任意地址，<code>p64(0)*3 + p64(addr)</code></li>
-<li>再次写入a，任意地址写入</li>
+<li>再次写入a，任意地址写入<h3 id="法二"><a href="#法二" class="headerlink" title="法二"></a>法二</h3>不能溢出，但有double free</li>
+<li>分配连续3个fastchunk a, b, c</li>
+<li>释放a，此时并不会修改后面的inuse位和prevsize</li>
+<li>申请一个大内存，触发fastbin合并，这时会将fastbin中的a取出放入unsortedbin，可以实现对b的inuse位进行修改</li>
+<li>触发double free，将a再次释放，放入fastbin</li>
+<li>再申请与a相同大小的chunk，就会从fastbin中将a返回，同时不会改变b的inuse</li>
+<li>布置a内存，释放b，触发unlink</li>
 </ol>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><pre><code>TODO
-</code></pre>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p><em>TODO</em></p>
+
       
     </div>
     
@@ -587,7 +606,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#触发前提"><span class="nav-number">2.</span> <span class="nav-text">触发前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用过程（64位为例）"><span class="nav-number">3.</span> <span class="nav-text">利用过程（64位为例）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题目"><span class="nav-number">4.</span> <span class="nav-text">题目</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#触发前提"><span class="nav-number">2.</span> <span class="nav-text">触发前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用过程（64位为例）"><span class="nav-number">3.</span> <span class="nav-text">利用过程（64位为例）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#法一"><span class="nav-number">3.1.</span> <span class="nav-text">法一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#法二"><span class="nav-number">3.2.</span> <span class="nav-text">法二</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题目"><span class="nav-number">4.</span> <span class="nav-text">题目</span></a></li></ol></div>
             
 
           </div>
