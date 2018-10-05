@@ -89,7 +89,7 @@
 <meta property="og:site_name" content="Hpasserby">
 <meta property="og:description" content="原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk，其过程中的指针操作存在任意写的漏洞。从双向链表中取出节点的过程，若是学过数据结构应该都比较清楚，主要代码是：">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-05T14:28:17.830Z">
+<meta property="og:updated_time" content="2018-10-05T15:43:10.264Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="堆利用学习之unlink">
 <meta name="twitter:description" content="原理unlink是内存操作中的一个宏， 用来从双向链表中取出一个free chunk，其过程中的指针操作存在任意写的漏洞。从双向链表中取出节点的过程，若是学过数据结构应该都比较清楚，主要代码是：">
@@ -407,7 +407,7 @@
 <p>在此之后，P就指向了比自己的地址低0x18个字节的位置，可以通过再次向P写入从而覆盖掉P本身，将其修改为任意地址，第三次向P写入则实现了任意地址写。</p>
 <h2 id="触发前提"><a href="#触发前提" class="headerlink" title="触发前提"></a>触发前提</h2><ol>
 <li>堆指针是全局变量，或其地址是可泄露的</li>
-<li>能够free一个smallchunk(可以是伪造的)(largebin增加对fd_nextsize和bk_nextsize检查，unsortedbin没有检查)</li>
+<li>能够free一个smallchunk或largechunk(可以是伪造的)</li>
 <li>能够控制下一chunk的prevsize和size</li>
 </ol>
 <h2 id="利用过程（64位为例）"><a href="#利用过程（64位为例）" class="headerlink" title="利用过程（64位为例）"></a>利用过程（64位为例）</h2><h3 id="法一"><a href="#法一" class="headerlink" title="法一"></a>法一</h3><p>存在堆溢出时：</p>
@@ -556,7 +556,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -578,7 +578,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
