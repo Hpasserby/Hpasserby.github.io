@@ -81,19 +81,19 @@
 
 
 
-<meta name="description" content="第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。  题目描述题目来源：HITCON CTF 2018">
+<meta name="description" content="第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。  题目描述题目来源：HITCON CTF 2018知识点：tcache &amp;amp;&amp;amp; overlapping &amp;amp;&amp;amp; off_by_one">
 <meta name="keywords" content="堆利用,off_by_one,overlapping,tcache">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hitcon2018 children_tcache writeup &amp;&amp; overlapping">
 <meta property="og:url" content="https://hpasserby.me/post/cdad9cf7.html">
 <meta property="og:site_name" content="Hpasserby">
-<meta property="og:description" content="第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。  题目描述题目来源：HITCON CTF 2018">
+<meta property="og:description" content="第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。  题目描述题目来源：HITCON CTF 2018知识点：tcache &amp;amp;&amp;amp; overlapping &amp;amp;&amp;amp; off_by_one">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://hpasserby.me/post/cdad9cf7/overlap.png">
-<meta property="og:updated_time" content="2018-11-03T08:37:23.112Z">
+<meta property="og:updated_time" content="2018-11-09T14:22:43.536Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hitcon2018 children_tcache writeup &amp;&amp; overlapping">
-<meta name="twitter:description" content="第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。  题目描述题目来源：HITCON CTF 2018">
+<meta name="twitter:description" content="第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。  题目描述题目来源：HITCON CTF 2018知识点：tcache &amp;amp;&amp;amp; overlapping &amp;amp;&amp;amp; off_by_one">
 <meta name="twitter:image" content="https://hpasserby.me/post/cdad9cf7/overlap.png">
 
 
@@ -356,8 +356,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/writeips/" itemprop="url" rel="index">
-                    <span itemprop="name">writeips</span>
+                  <a href="/categories/writeups/" itemprop="url" rel="index">
+                    <span itemprop="name">writeups</span>
                   </a>
                 </span>
 
@@ -407,7 +407,7 @@
         <blockquote>
 <p>第一次参加HITCON CTF，之前在学堆利用的时候倒是做过几道往年的题，自我感觉还挺不错的，结果就爆零了23333。前几天就在网上看到了这题的writeup，一直拖到今天才拿来学习了一波，看完感觉自己是真的菜。。。</p>
 </blockquote>
-<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>题目来源：HITCON CTF 2018<br><a id="more"></a><br>题目界面：</p>
+<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>题目来源：HITCON CTF 2018<br>知识点：tcache &amp;&amp; overlapping &amp;&amp; off_by_one<br><a id="more"></a><br>题目界面：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$$$$$$$$$$$$$$$$$$$$$$$$$$$</span><br><span class="line">🍊    Children Tcache    🍊</span><br><span class="line">$$$$$$$$$$$$$$$$$$$$$$$$$$$</span><br><span class="line">$   <span class="number">1.</span> New heap           $</span><br><span class="line">$   <span class="number">2.</span> Show heap          $</span><br><span class="line">$   <span class="number">3.</span> Delete heap        $ </span><br><span class="line">$   <span class="number">4.</span> Exit               $ </span><br><span class="line">$$$$$$$$$$$$$$$$$$$$$$$$$$$</span><br><span class="line">Your choice:</span><br></pre></td></tr></table></figure>
 <p>保护全开：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64<span class="number">-64</span>-little</span><br><span class="line">RELRO:    Full RELRO</span><br><span class="line">Stack:    Canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br><span class="line">FORTIFY:  Enabled</span><br></pre></td></tr></table></figure></p>
 <h2 id="漏洞情况"><a href="#漏洞情况" class="headerlink" title="漏洞情况"></a>漏洞情况</h2><p><strong>new_heap</strong>函数中:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">  <span class="built_in">printf</span>(<span class="string">"Size:"</span>);</span><br><span class="line">  size = get_num();</span><br><span class="line">  <span class="keyword">if</span> ( size &gt; <span class="number">0x2000</span> )</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-2</span>);</span><br><span class="line">  dest = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(size);</span><br><span class="line">  <span class="keyword">if</span> ( !dest )</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Data:"</span>);</span><br><span class="line">  get_str((__int64)&amp;s, size);</span><br><span class="line">  <span class="built_in">strcpy</span>(dest, &amp;s);</span><br><span class="line">  data_list[i] = dest;</span><br><span class="line">  size_list[i] = size;</span><br><span class="line">  <span class="keyword">return</span> __readfsqword(<span class="number">0x28</span>u) ^ v5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -475,6 +475,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/post/8e1cd5dc.html" rel="prev" title="Hitcon2018 baby_tcache writeup">
+                Hitcon2018 baby_tcache writeup <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -554,7 +558,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -565,7 +569,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
