@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://hpasserby.me/about/index.html</loc>
+    
+    <lastmod>2019-01-09T16:45:17.704Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://hpasserby.me/post/e99b1303.html</loc>
     
     <lastmod>2019-01-09T16:39:52.505Z</lastmod>
@@ -40,13 +47,6 @@
     <loc>https://hpasserby.me/post/e7616071.html</loc>
     
     <lastmod>2018-10-14T06:09:51.362Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://hpasserby.me/about/index.html</loc>
-    
-    <lastmod>2018-10-12T14:48:46.509Z</lastmod>
     
   </url>
   
